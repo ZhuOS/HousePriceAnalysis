@@ -1,4 +1,4 @@
-
+#coding:utf8
 import codecs
 import requests
 from bs4 import BeautifulSoup
@@ -6,6 +6,9 @@ import common.MySQLHelper
 import common.CommonHelper
 import time
 import traceback
+#import sys
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 DOWNLOAD_URL = 'https://sz.zu.anjuke.com/'
 def DownloadPage(url):	
 	html = requests.get(url, headers={
