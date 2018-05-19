@@ -305,3 +305,499 @@
 [2018-05-19 13:46:50,900][HousePriceAnalysis.py:164]:INFO: replace table[city_info] city_name[ff州], anjuke_homepage_url[---] anjuke_rent_url[xx] ok!
 [2018-05-19 13:48:31,579][HousePriceAnalysis.py:173]:INFO: update table[city_info] successfully!
 [2018-05-19 13:51:25,411][HousePriceAnalysis.py:100]:INFO: update table[city_info] successfully!
+[2018-05-19 16:49:58,666][HousePriceAnalysis.py:77]:ERROR: [Exception] HTTPSConnectionPool(host='meishan.anjuke.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x00000000050B9A58>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。',))
+Traceback (most recent call last):
+  File "D:\Python\Python36\lib\site-packages\urllib3\connection.py", line 141, in _new_conn
+    (self.host, self.port), self.timeout, **extra_kw)
+  File "D:\Python\Python36\lib\site-packages\urllib3\util\connection.py", line 83, in create_connection
+    raise err
+  File "D:\Python\Python36\lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Python\Python36\lib\site-packages\urllib3\connectionpool.py", line 601, in urlopen
+    chunked=chunked)
+  File "D:\Python\Python36\lib\site-packages\urllib3\connectionpool.py", line 346, in _make_request
+    self._validate_conn(conn)
+  File "D:\Python\Python36\lib\site-packages\urllib3\connectionpool.py", line 850, in _validate_conn
+    conn.connect()
+  File "D:\Python\Python36\lib\site-packages\urllib3\connection.py", line 284, in connect
+    conn = self._new_conn()
+  File "D:\Python\Python36\lib\site-packages\urllib3\connection.py", line 150, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.VerifiedHTTPSConnection object at 0x00000000050B9A58>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Python\Python36\lib\site-packages\requests\adapters.py", line 440, in send
+    timeout=timeout
+  File "D:\Python\Python36\lib\site-packages\urllib3\connectionpool.py", line 639, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "D:\Python\Python36\lib\site-packages\urllib3\util\retry.py", line 388, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='meishan.anjuke.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x00000000050B9A58>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。',))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Project\python\HousePriceAnalysis\HousePriceAnalysis.py", line 72, in UpdateTable_city_info
+    city_rent_url_dict = GetAnjukeCityZuUrl(city_homepage_url_dict)
+  File "D:\Project\python\HousePriceAnalysis\HousePriceAnalysis.py", line 122, in GetAnjukeCityZuUrl
+    html = DownloadPage(c_url)
+  File "D:\Project\python\HousePriceAnalysis\HousePriceAnalysis.py", line 15, in DownloadPage
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'
+  File "D:\Python\Python36\lib\site-packages\requests\api.py", line 72, in get
+    return request('get', url, params=params, **kwargs)
+  File "D:\Python\Python36\lib\site-packages\requests\api.py", line 58, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "D:\Python\Python36\lib\site-packages\requests\sessions.py", line 508, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\Python\Python36\lib\site-packages\requests\sessions.py", line 618, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\Python\Python36\lib\site-packages\requests\adapters.py", line 508, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='meishan.anjuke.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x00000000050B9A58>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。',))
+
+[2018-05-19 16:58:03,109][HousePriceAnalysis.py:77]:ERROR: [Exception] HTTPSConnectionPool(host='chuxiong.anjuke.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x0000000003EE44E0>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。',))
+Traceback (most recent call last):
+  File "D:\Python\Python36\lib\site-packages\urllib3\connection.py", line 141, in _new_conn
+    (self.host, self.port), self.timeout, **extra_kw)
+  File "D:\Python\Python36\lib\site-packages\urllib3\util\connection.py", line 83, in create_connection
+    raise err
+  File "D:\Python\Python36\lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Python\Python36\lib\site-packages\urllib3\connectionpool.py", line 601, in urlopen
+    chunked=chunked)
+  File "D:\Python\Python36\lib\site-packages\urllib3\connectionpool.py", line 346, in _make_request
+    self._validate_conn(conn)
+  File "D:\Python\Python36\lib\site-packages\urllib3\connectionpool.py", line 850, in _validate_conn
+    conn.connect()
+  File "D:\Python\Python36\lib\site-packages\urllib3\connection.py", line 284, in connect
+    conn = self._new_conn()
+  File "D:\Python\Python36\lib\site-packages\urllib3\connection.py", line 150, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.VerifiedHTTPSConnection object at 0x0000000003EE44E0>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Python\Python36\lib\site-packages\requests\adapters.py", line 440, in send
+    timeout=timeout
+  File "D:\Python\Python36\lib\site-packages\urllib3\connectionpool.py", line 639, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "D:\Python\Python36\lib\site-packages\urllib3\util\retry.py", line 388, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='chuxiong.anjuke.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x0000000003EE44E0>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。',))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Project\python\HousePriceAnalysis\HousePriceAnalysis.py", line 72, in UpdateTable_city_info
+    city_rent_url_dict = GetAnjukeCityZuUrl(city_homepage_url_dict)
+  File "D:\Project\python\HousePriceAnalysis\HousePriceAnalysis.py", line 123, in GetAnjukeCityZuUrl
+    html = DownloadPage(c_url)
+  File "D:\Project\python\HousePriceAnalysis\HousePriceAnalysis.py", line 15, in DownloadPage
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'
+  File "D:\Python\Python36\lib\site-packages\requests\api.py", line 72, in get
+    return request('get', url, params=params, **kwargs)
+  File "D:\Python\Python36\lib\site-packages\requests\api.py", line 58, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "D:\Python\Python36\lib\site-packages\requests\sessions.py", line 508, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\Python\Python36\lib\site-packages\requests\sessions.py", line 618, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\Python\Python36\lib\site-packages\requests\adapters.py", line 508, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='chuxiong.anjuke.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x0000000003EE44E0>: Failed to establish a new connection: [WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。',))
+
+[2018-05-19 17:48:13,221][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[铁东], district_name[铁东] ok!
+[2018-05-19 17:52:13,308][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[铁东], district_name[铁东] ok!
+[2018-05-19 17:52:13,332][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[铁西], district_name[铁西] ok!
+[2018-05-19 17:52:13,352][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[立山], district_name[立山] ok!
+[2018-05-19 17:52:13,364][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[海城], district_name[海城] ok!
+[2018-05-19 17:52:13,393][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[千山], district_name[千山] ok!
+[2018-05-19 17:52:13,403][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[岫岩], district_name[岫岩] ok!
+[2018-05-19 17:52:13,460][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[台安], district_name[台安] ok!
+[2018-05-19 17:52:13,492][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[鞍山周边], district_name[鞍山周边] ok!
+[2018-05-19 17:52:14,248][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[朝阳], district_name[朝阳] ok!
+[2018-05-19 17:52:14,310][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[海淀], district_name[海淀] ok!
+[2018-05-19 17:52:14,383][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[东城], district_name[东城] ok!
+[2018-05-19 17:52:14,411][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[西城], district_name[西城] ok!
+[2018-05-19 17:52:14,437][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[丰台], district_name[丰台] ok!
+[2018-05-19 17:52:14,448][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[通州], district_name[通州] ok!
+[2018-05-19 17:52:14,478][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[石景山], district_name[石景山] ok!
+[2018-05-19 17:52:14,487][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[昌平], district_name[昌平] ok!
+[2018-05-19 17:52:14,507][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[大兴], district_name[大兴] ok!
+[2018-05-19 17:52:14,554][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[顺义], district_name[顺义] ok!
+[2018-05-19 17:52:14,577][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[房山], district_name[房山] ok!
+[2018-05-19 17:52:14,593][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[门头沟], district_name[门头沟] ok!
+[2018-05-19 17:52:14,605][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[密云], district_name[密云] ok!
+[2018-05-19 17:52:14,615][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[怀柔], district_name[怀柔] ok!
+[2018-05-19 17:52:14,648][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[平谷], district_name[平谷] ok!
+[2018-05-19 17:52:14,657][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[延庆], district_name[延庆] ok!
+[2018-05-19 17:52:14,666][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[北京周边], district_name[北京周边] ok!
+[2018-05-19 17:52:15,386][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[青羊], district_name[青羊] ok!
+[2018-05-19 17:52:15,395][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[锦江], district_name[锦江] ok!
+[2018-05-19 17:52:15,404][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[金牛], district_name[金牛] ok!
+[2018-05-19 17:52:15,413][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[武侯], district_name[武侯] ok!
+[2018-05-19 17:52:15,421][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[成华], district_name[成华] ok!
+[2018-05-19 17:52:15,430][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[高新区], district_name[高新区] ok!
+[2018-05-19 17:52:15,438][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[天府新区], district_name[天府新区] ok!
+[2018-05-19 17:52:15,447][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[温江], district_name[温江] ok!
+[2018-05-19 17:52:15,455][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[龙泉驿], district_name[龙泉驿] ok!
+[2018-05-19 17:52:15,464][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[双流], district_name[双流] ok!
+[2018-05-19 17:52:15,513][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[都江堰], district_name[都江堰] ok!
+[2018-05-19 17:52:15,551][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[郫都], district_name[郫都] ok!
+[2018-05-19 17:52:15,573][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[新都], district_name[新都] ok!
+[2018-05-19 17:52:15,612][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[青白江], district_name[青白江] ok!
+[2018-05-19 17:52:15,650][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[新津], district_name[新津] ok!
+[2018-05-19 17:52:15,673][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[金堂], district_name[金堂] ok!
+[2018-05-19 17:52:15,691][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[彭州], district_name[彭州] ok!
+[2018-05-19 17:52:15,707][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[崇州], district_name[崇州] ok!
+[2018-05-19 17:52:15,723][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[大邑], district_name[大邑] ok!
+[2018-05-19 17:52:15,760][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[邛崃], district_name[邛崃] ok!
+[2018-05-19 17:52:15,783][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[蒲江], district_name[蒲江] ok!
+[2018-05-19 17:52:15,822][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[简阳], district_name[简阳] ok!
+[2018-05-19 17:52:15,829][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[成都周边], district_name[成都周边] ok!
+[2018-05-19 17:52:16,755][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[中山], district_name[中山] ok!
+[2018-05-19 17:52:16,801][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[西岗], district_name[西岗] ok!
+[2018-05-19 17:52:16,825][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[沙河口], district_name[沙河口] ok!
+[2018-05-19 17:52:16,840][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[甘井子], district_name[甘井子] ok!
+[2018-05-19 17:55:43,087][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:55:43,095][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[开发区], district_name[开发区] ok!
+[2018-05-19 17:55:43,104][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[金州], district_name[金州] ok!
+[2018-05-19 17:55:43,113][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[旅顺口], district_name[旅顺口] ok!
+[2018-05-19 17:55:43,122][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[瓦房店], district_name[瓦房店] ok!
+[2018-05-19 17:55:43,131][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[普兰店], district_name[普兰店] ok!
+[2018-05-19 17:55:43,139][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[庄河], district_name[庄河] ok!
+[2018-05-19 17:55:43,147][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[长海], district_name[长海] ok!
+[2018-05-19 17:55:44,967][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[东胜], district_name[东胜] ok!
+[2018-05-19 17:55:44,998][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[达拉特旗], district_name[达拉特旗] ok!
+[2018-05-19 17:55:45,017][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[准格尔旗], district_name[准格尔旗] ok!
+[2018-05-19 17:55:45,027][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[鄂托克旗], district_name[鄂托克旗] ok!
+[2018-05-19 17:55:45,036][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[鄂托克前旗], district_name[鄂托克前旗] ok!
+[2018-05-19 17:55:45,045][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[杭锦旗], district_name[杭锦旗] ok!
+[2018-05-19 17:55:45,054][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[乌审旗], district_name[乌审旗] ok!
+[2018-05-19 17:55:45,063][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[伊金霍洛旗], district_name[伊金霍洛旗] ok!
+[2018-05-19 17:55:45,071][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[康巴什区], district_name[康巴什区] ok!
+[2018-05-19 17:55:45,080][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[其它], district_name[其它] ok!
+[2018-05-19 17:55:45,901][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[禅城], district_name[禅城] ok!
+[2018-05-19 17:55:45,910][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[顺德], district_name[顺德] ok!
+[2018-05-19 17:55:45,919][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[南海], district_name[南海] ok!
+[2018-05-19 17:55:45,927][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[高明], district_name[高明] ok!
+[2018-05-19 17:55:45,935][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[三水], district_name[三水] ok!
+[2018-05-19 17:55:46,967][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[番禺], district_name[番禺] ok!
+[2018-05-19 17:55:46,976][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[天河], district_name[天河] ok!
+[2018-05-19 17:55:46,985][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[白云], district_name[白云] ok!
+[2018-05-19 17:55:46,996][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[海珠], district_name[海珠] ok!
+[2018-05-19 17:55:47,025][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[增城], district_name[增城] ok!
+[2018-05-19 17:55:47,033][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[花都], district_name[花都] ok!
+[2018-05-19 17:55:47,068][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[越秀], district_name[越秀] ok!
+[2018-05-19 17:55:47,084][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[黄埔], district_name[黄埔] ok!
+[2018-05-19 17:55:47,101][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[南沙], district_name[南沙] ok!
+[2018-05-19 17:55:47,130][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[荔湾], district_name[荔湾] ok!
+[2018-05-19 17:55:47,179][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[从化], district_name[从化] ok!
+[2018-05-19 17:55:47,202][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[广州周边], district_name[广州周边] ok!
+[2018-05-19 17:55:48,129][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[萧山], district_name[萧山] ok!
+[2018-05-19 17:55:48,138][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[滨江], district_name[滨江] ok!
+[2018-05-19 17:55:48,147][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[西湖], district_name[西湖] ok!
+[2018-05-19 17:55:48,156][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[临安], district_name[临安] ok!
+[2018-05-19 17:55:48,164][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[余杭], district_name[余杭] ok!
+[2018-05-19 17:55:48,172][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[江干], district_name[江干] ok!
+[2018-05-19 17:55:48,181][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[拱墅], district_name[拱墅] ok!
+[2018-05-19 17:55:48,189][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[上城], district_name[上城] ok!
+[2018-05-19 17:55:48,203][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[富阳], district_name[富阳] ok!
+[2018-05-19 17:55:48,212][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[下城], district_name[下城] ok!
+[2018-05-19 17:55:48,224][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[桐庐], district_name[桐庐] ok!
+[2018-05-19 17:55:48,235][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[淳安], district_name[淳安] ok!
+[2018-05-19 17:55:48,244][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[建德], district_name[建德] ok!
+[2018-05-19 17:55:48,252][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[杭州周边], district_name[杭州周边] ok!
+[2018-05-19 17:55:49,281][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[历下], district_name[历下] ok!
+[2018-05-19 17:55:49,298][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[槐荫], district_name[槐荫] ok!
+[2018-05-19 17:55:49,311][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[市中], district_name[市中] ok!
+[2018-05-19 17:55:49,359][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[历城], district_name[历城] ok!
+[2018-05-19 17:55:49,368][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[章丘], district_name[章丘] ok!
+[2018-05-19 17:55:49,376][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[天桥], district_name[天桥] ok!
+[2018-05-19 17:55:49,388][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:55:49,397][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[长清], district_name[长清] ok!
+[2018-05-19 17:55:49,405][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[济阳], district_name[济阳] ok!
+[2018-05-19 17:55:49,414][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[商河], district_name[商河] ok!
+[2018-05-19 17:55:49,423][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[平阴], district_name[平阴] ok!
+[2018-05-19 17:55:50,467][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[西山], district_name[西山] ok!
+[2018-05-19 17:55:50,500][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[盘龙], district_name[盘龙] ok!
+[2018-05-19 17:55:50,509][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[官渡], district_name[官渡] ok!
+[2018-05-19 17:55:50,527][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[五华], district_name[五华] ok!
+[2018-05-19 17:55:50,555][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[呈贡], district_name[呈贡] ok!
+[2018-05-19 17:55:50,593][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[安宁], district_name[安宁] ok!
+[2018-05-19 17:55:50,602][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[嵩明], district_name[嵩明] ok!
+[2018-05-19 17:55:50,611][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[晋宁], district_name[晋宁] ok!
+[2018-05-19 17:55:50,628][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[宜良], district_name[宜良] ok!
+[2018-05-19 17:55:50,637][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[富民], district_name[富民] ok!
+[2018-05-19 17:55:50,645][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[石林], district_name[石林] ok!
+[2018-05-19 17:55:50,660][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[禄劝], district_name[禄劝] ok!
+[2018-05-19 17:55:50,672][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[寻甸], district_name[寻甸] ok!
+[2018-05-19 17:55:50,680][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[东川], district_name[东川] ok!
+[2018-05-19 17:55:51,599][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[城关], district_name[城关] ok!
+[2018-05-19 17:55:51,608][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[七里河], district_name[七里河] ok!
+[2018-05-19 17:55:51,616][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:55:51,625][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[西固], district_name[西固] ok!
+[2018-05-19 17:55:51,634][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[兰州新区], district_name[兰州新区] ok!
+[2018-05-19 17:55:51,642][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[榆中], district_name[榆中] ok!
+[2018-05-19 17:55:51,653][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[永登], district_name[永登] ok!
+[2018-05-19 17:55:51,662][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[皋兰], district_name[皋兰] ok!
+[2018-05-19 17:55:51,671][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[红古], district_name[红古] ok!
+[2018-05-19 17:56:48,079][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:56:49,219][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:56:54,047][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:56:54,931][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:56:55,822][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:35,844][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:37,095][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:41,801][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:42,897][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:43,942][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:44,828][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[涪城], district_name[涪城] ok!
+[2018-05-19 17:59:44,846][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[游仙], district_name[游仙] ok!
+[2018-05-19 17:59:44,853][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[三台县], district_name[三台县] ok!
+[2018-05-19 17:59:44,861][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[盐亭县], district_name[盐亭县] ok!
+[2018-05-19 17:59:44,869][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[安县], district_name[安县] ok!
+[2018-05-19 17:59:44,878][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[梓潼县], district_name[梓潼县] ok!
+[2018-05-19 17:59:44,886][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[北川县], district_name[北川县] ok!
+[2018-05-19 17:59:44,905][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[平武县], district_name[平武县] ok!
+[2018-05-19 17:59:44,944][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[江油市], district_name[江油市] ok!
+[2018-05-19 17:59:44,968][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[高新], district_name[高新] ok!
+[2018-05-19 17:59:44,982][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[科创园区], district_name[科创园区] ok!
+[2018-05-19 17:59:44,994][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[经开区], district_name[经开区] ok!
+[2018-05-19 17:59:45,002][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[农科], district_name[农科] ok!
+[2018-05-19 17:59:45,016][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[仙海], district_name[仙海] ok!
+[2018-05-19 17:59:45,845][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[江宁], district_name[江宁] ok!
+[2018-05-19 17:59:45,861][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[浦口], district_name[浦口] ok!
+[2018-05-19 17:59:45,869][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[建邺], district_name[建邺] ok!
+[2018-05-19 17:59:45,879][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[鼓楼], district_name[鼓楼] ok!
+[2018-05-19 17:59:45,889][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[秦淮], district_name[秦淮] ok!
+[2018-05-19 17:59:45,940][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[玄武], district_name[玄武] ok!
+[2018-05-19 17:59:45,969][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[栖霞], district_name[栖霞] ok!
+[2018-05-19 17:59:45,983][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[雨花台], district_name[雨花台] ok!
+[2018-05-19 17:59:45,996][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[六合], district_name[六合] ok!
+[2018-05-19 17:59:46,004][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[溧水], district_name[溧水] ok!
+[2018-05-19 17:59:46,012][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[高淳], district_name[高淳] ok!
+[2018-05-19 17:59:46,021][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[滨江开发区], district_name[滨江开发区] ok!
+[2018-05-19 17:59:46,035][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[南京周边], district_name[南京周边] ok!
+[2018-05-19 17:59:47,249][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[东区], district_name[东区] ok!
+[2018-05-19 17:59:47,258][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[西区], district_name[西区] ok!
+[2018-05-19 17:59:47,267][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[仁和], district_name[仁和] ok!
+[2018-05-19 17:59:47,292][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[米易], district_name[米易] ok!
+[2018-05-19 17:59:47,302][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[盐边], district_name[盐边] ok!
+[2018-05-19 17:59:48,151][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[黄岛], district_name[黄岛] ok!
+[2018-05-19 17:59:48,158][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[城阳], district_name[城阳] ok!
+[2018-05-19 17:59:48,171][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[李沧], district_name[李沧] ok!
+[2018-05-19 17:59:48,179][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[市北], district_name[市北] ok!
+[2018-05-19 17:59:48,193][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[市南], district_name[市南] ok!
+[2018-05-19 17:59:48,200][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[崂山], district_name[崂山] ok!
+[2018-05-19 17:59:48,216][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[即墨], district_name[即墨] ok!
+[2018-05-19 17:59:48,223][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[胶州], district_name[胶州] ok!
+[2018-05-19 17:59:48,230][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[平度], district_name[平度] ok!
+[2018-05-19 17:59:48,238][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[莱西], district_name[莱西] ok!
+[2018-05-19 17:59:48,244][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[青岛周边], district_name[青岛周边] ok!
+[2018-05-19 17:59:49,114][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[东港], district_name[东港] ok!
+[2018-05-19 17:59:49,134][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[岚山], district_name[岚山] ok!
+[2018-05-19 17:59:49,163][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[莒县], district_name[莒县] ok!
+[2018-05-19 17:59:49,170][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[五莲], district_name[五莲] ok!
+[2018-05-19 17:59:49,178][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:50,026][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[浦东], district_name[浦东] ok!
+[2018-05-19 17:59:50,074][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[闵行], district_name[闵行] ok!
+[2018-05-19 17:59:50,120][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[宝山], district_name[宝山] ok!
+[2018-05-19 17:59:50,146][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[徐汇], district_name[徐汇] ok!
+[2018-05-19 17:59:50,185][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[松江], district_name[松江] ok!
+[2018-05-19 17:59:50,241][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[嘉定], district_name[嘉定] ok!
+[2018-05-19 17:59:50,275][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[静安], district_name[静安] ok!
+[2018-05-19 17:59:50,331][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[普陀], district_name[普陀] ok!
+[2018-05-19 17:59:50,380][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[杨浦], district_name[杨浦] ok!
+[2018-05-19 17:59:50,424][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[虹口], district_name[虹口] ok!
+[2018-05-19 17:59:50,446][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[长宁], district_name[长宁] ok!
+[2018-05-19 17:59:50,484][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[黄浦], district_name[黄浦] ok!
+[2018-05-19 17:59:50,543][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[青浦], district_name[青浦] ok!
+[2018-05-19 17:59:50,610][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[奉贤], district_name[奉贤] ok!
+[2018-05-19 17:59:50,630][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[金山], district_name[金山] ok!
+[2018-05-19 17:59:50,646][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[崇明], district_name[崇明] ok!
+[2018-05-19 17:59:50,687][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[上海周边], district_name[上海周边] ok!
+[2018-05-19 17:59:51,539][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[和平], district_name[和平] ok!
+[2018-05-19 17:59:51,546][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[东丽], district_name[东丽] ok!
+[2018-05-19 17:59:51,554][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[宁河], district_name[宁河] ok!
+[2018-05-19 17:59:51,560][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[静海], district_name[静海] ok!
+[2018-05-19 17:59:51,568][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[蓟州], district_name[蓟州] ok!
+[2018-05-19 17:59:51,575][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[宝坻], district_name[宝坻] ok!
+[2018-05-19 17:59:51,582][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[武清], district_name[武清] ok!
+[2018-05-19 17:59:51,624][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[河西], district_name[河西] ok!
+[2018-05-19 17:59:51,631][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[北辰], district_name[北辰] ok!
+[2018-05-19 17:59:51,647][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[津南], district_name[津南] ok!
+[2018-05-19 17:59:51,655][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[西青], district_name[西青] ok!
+[2018-05-19 17:59:51,668][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[滨海新区], district_name[滨海新区] ok!
+[2018-05-19 17:59:51,680][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[红桥], district_name[红桥] ok!
+[2018-05-19 17:59:51,688][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[河东], district_name[河东] ok!
+[2018-05-19 17:59:51,716][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[河北], district_name[河北] ok!
+[2018-05-19 17:59:51,722][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[南开], district_name[南开] ok!
+[2018-05-19 17:59:51,753][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[塘沽], district_name[塘沽] ok!
+[2018-05-19 17:59:51,760][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[滨海高新区], district_name[滨海高新区] ok!
+[2018-05-19 17:59:51,767][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[大港], district_name[大港] ok!
+[2018-05-19 17:59:51,779][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[汉沽], district_name[汉沽] ok!
+[2018-05-19 17:59:51,818][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[天津周边], district_name[天津周边] ok!
+[2018-05-19 17:59:52,658][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[武昌], district_name[武昌] ok!
+[2018-05-19 17:59:52,667][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[洪山], district_name[洪山] ok!
+[2018-05-19 17:59:52,673][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[江岸], district_name[江岸] ok!
+[2018-05-19 17:59:52,681][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[汉阳], district_name[汉阳] ok!
+[2018-05-19 17:59:52,687][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[江汉], district_name[江汉] ok!
+[2018-05-19 17:59:52,695][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[硚口], district_name[硚口] ok!
+[2018-05-19 17:59:52,702][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[东西湖], district_name[东西湖] ok!
+[2018-05-19 17:59:52,709][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[江夏], district_name[江夏] ok!
+[2018-05-19 17:59:52,716][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[黄陂], district_name[黄陂] ok!
+[2018-05-19 17:59:52,765][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[沌口开发区], district_name[沌口开发区] ok!
+[2018-05-19 17:59:52,787][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[青山], district_name[青山] ok!
+[2018-05-19 17:59:52,795][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[东湖高新], district_name[东湖高新] ok!
+[2018-05-19 17:59:52,802][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[蔡甸], district_name[蔡甸] ok!
+[2018-05-19 17:59:52,809][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[新洲], district_name[新洲] ok!
+[2018-05-19 17:59:52,815][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[汉南], district_name[汉南] ok!
+[2018-05-19 17:59:53,729][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[雁塔], district_name[雁塔] ok!
+[2018-05-19 17:59:53,735][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[未央], district_name[未央] ok!
+[2018-05-19 17:59:53,788][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:53,795][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[曲江新区], district_name[曲江新区] ok!
+[2018-05-19 17:59:53,803][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[长安], district_name[长安] ok!
+[2018-05-19 17:59:53,809][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[碑林], district_name[碑林] ok!
+[2018-05-19 17:59:53,827][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[莲湖], district_name[莲湖] ok!
+[2018-05-19 17:59:53,866][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[新城], district_name[新城] ok!
+[2018-05-19 17:59:53,890][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[灞桥], district_name[灞桥] ok!
+[2018-05-19 17:59:53,906][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:53,933][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[浐灞], district_name[浐灞] ok!
+[2018-05-19 17:59:53,966][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[西咸新区], district_name[西咸新区] ok!
+[2018-05-19 17:59:53,988][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[高陵], district_name[高陵] ok!
+[2018-05-19 17:59:54,010][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[鄠邑], district_name[鄠邑] ok!
+[2018-05-19 17:59:54,034][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[临潼], district_name[临潼] ok!
+[2018-05-19 17:59:54,043][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[蓝田], district_name[蓝田] ok!
+[2018-05-19 17:59:54,059][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[阎良], district_name[阎良] ok!
+[2018-05-19 17:59:54,099][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[周至], district_name[周至] ok!
+[2018-05-19 17:59:54,121][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[西安周边], district_name[西安周边] ok!
+[2018-05-19 17:59:54,937][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[莱山], district_name[莱山] ok!
+[2018-05-19 17:59:54,963][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[芝罘], district_name[芝罘] ok!
+[2018-05-19 17:59:54,978][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[福山], district_name[福山] ok!
+[2018-05-19 17:59:55,018][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[牟平], district_name[牟平] ok!
+[2018-05-19 17:59:55,042][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:55,056][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[龙口], district_name[龙口] ok!
+[2018-05-19 17:59:55,068][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[海阳], district_name[海阳] ok!
+[2018-05-19 17:59:55,077][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[蓬莱], district_name[蓬莱] ok!
+[2018-05-19 17:59:55,089][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[莱阳], district_name[莱阳] ok!
+[2018-05-19 17:59:55,128][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[莱州], district_name[莱州] ok!
+[2018-05-19 17:59:55,151][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:55,161][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[招远], district_name[招远] ok!
+[2018-05-19 17:59:55,171][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[长岛], district_name[长岛] ok!
+[2018-05-19 17:59:55,180][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:56,099][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[金水], district_name[金水] ok!
+[2018-05-19 17:59:56,106][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[郑东新区], district_name[郑东新区] ok!
+[2018-05-19 17:59:56,113][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[管城], district_name[管城] ok!
+[2018-05-19 17:59:56,120][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[中原], district_name[中原] ok!
+[2018-05-19 17:59:56,128][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[二七], district_name[二七] ok!
+[2018-05-19 17:59:56,135][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[惠济], district_name[惠济] ok!
+[2018-05-19 17:59:56,141][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:56,148][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[中牟], district_name[中牟] ok!
+[2018-05-19 17:59:56,155][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:56,162][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[荥阳], district_name[荥阳] ok!
+[2018-05-19 17:59:56,174][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[新郑], district_name[新郑] ok!
+[2018-05-19 17:59:56,186][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[上街], district_name[上街] ok!
+[2018-05-19 17:59:56,193][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[新密], district_name[新密] ok!
+[2018-05-19 17:59:56,200][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[巩义], district_name[巩义] ok!
+[2018-05-19 17:59:56,219][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[登封], district_name[登封] ok!
+[2018-05-19 17:59:56,226][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[航空港], district_name[航空港] ok!
+[2018-05-19 17:59:56,241][HousePriceAnalysis.py:177]:INFO: insert table[district_info] district_name[郑州周边], district_name[郑州周边] ok!
+[2018-05-19 17:59:57,057][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,064][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,115][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,123][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,137][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,184][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,211][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,219][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,244][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,250][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,258][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,270][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,277][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,283][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,290][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,303][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,314][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,321][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,328][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,334][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,347][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,358][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 17:59:57,387][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:32,818][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:32,847][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:32,861][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:32,873][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:32,913][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:32,964][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,002][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,060][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,113][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,140][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,179][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,216][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,227][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,282][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,405][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,469][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,489][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,503][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,516][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,554][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,577][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,614][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:33,654][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:34,553][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:34,564][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:35,358][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:39,117][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:39,947][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:40,928][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:41,978][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:42,854][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:45,520][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:49,261][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:49,317][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:50,249][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:50,331][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:50,391][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:51,179][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:51,313][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,367][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,375][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,385][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,394][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,403][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,411][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,419][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,428][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,437][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,445][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,456][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,466][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,478][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,507][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,530][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,538][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,556][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,565][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,573][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,622][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,640][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,675][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
+[2018-05-19 18:03:52,733][HousePriceAnalysis.py:186]:INFO: update table[district_info] successfully!
