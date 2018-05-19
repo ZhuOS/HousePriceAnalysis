@@ -80,13 +80,26 @@ def UpdateTable_city_info(DB, Logger, url = ANJUKE_CITY_INFO_URL):
 		fields = {}
 		fields['city_name'] = city
 		fields['anjuke_homepage_url'] = city_homepage_url_dict[city]
-		fields['anjuke_rent_url'] = rent_url
-		if DB.insert(CITY_INFO_TABLE, fields):                
-			Logger.info("insert table[%s] city_name[%s], anjuke_homepage_url[%s] anjuke_rent_url[%s] ok!" % (CITY_INFO_TABLE, fields["city_name"], fields['anjuke_homepage_url'], fields['anjuke_rent_url']));            
-		else:            
-			Logger.error("insert table[%s] city_info city_name[%s], anjuke_homepage_url[%s] anjuke_rent_url[%s] failed! error[%s]" \
-                           % (CITY_INFO_TABLE, fields["city_name"], fields['anjuke_homepage_url'], fields['anjuke_rent_url'], DB.get_last_error()));
-		
+		fields['anjuke_rent_url'] = rent_url		
+		sql_string = f"SELECT city_id FROM city_info where city_name = '{city}'"        
+		if not DB.query(sql_string):
+			Logger.error("sql[%s], error[%s]", sql_string, DB.get_last_error())
+			continue
+		rows = DB.fetch_all()		
+		if len(rows) <= 0: 			
+			if DB.insert(CITY_INFO_TABLE, fields):                
+				Logger.info("insert table[%s] city_name[%s], anjuke_homepage_url[%s] anjuke_rent_url[%s] ok!" % (CITY_INFO_TABLE, fields["city_name"], fields['anjuke_homepage_url'], fields['anjuke_rent_url']));            
+			else:            
+				Logger.error("insert table[%s] city_info city_name[%s], anjuke_homepage_url[%s] anjuke_rent_url[%s] failed! error[%s]" \
+							   % (CITY_INFO_TABLE, fields["city_name"], fields['anjuke_homepage_url'], fields['anjuke_rent_url'], DB.get_last_error()));
+				continue
+		else:
+			city_id = rows[0]['city_id']
+			if DB.update(CITY_INFO_TABLE, fields, "city_id = '%s'" % city_id ):
+				if DB.rowcount() == 1:
+					Logger.info("update table[%s] successfully!" % CITY_INFO_TABLE);
+			else:
+				Logger.error("update table[%s] error! sqlerror[%s]" % (CITY_INFO_TABLE, DB.get_last_error()));
 	pass 
 	
 def GetAnjukeCityUrl(url = ANJUKE_CITY_INFO_URL):
@@ -134,9 +147,8 @@ if __name__ == '__main__':
 		'house_info'
 	)
 	DB.query('SET NAMES UTF8')
+	
 	UpdateTable_city_info(DB, Logger, ANJUKE_CITY_INFO_URL)
-	#city_homepage_url_dict = GetAnjukeCityUrl(ANJUKE_CITY_INFO_URL)
-	#city_rent_url_dict = GetAnjukeCityZuUrl(city_homepage_url_dict)
 	
 	
 	
