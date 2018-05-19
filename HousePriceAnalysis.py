@@ -1,13 +1,13 @@
+
 import codecs
 import requests
 from bs4 import BeautifulSoup
 import common.MySQLHelper
 import common.CommonHelper
 import time
-
+import traceback
 DOWNLOAD_URL = 'https://sz.zu.anjuke.com/'
 def DownloadPage(url):	
-	time.sleep(0.010)
 	html = requests.get(url, headers={
 		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'
 	}).content
@@ -64,18 +64,25 @@ ANJUKE_CITY_INFO_URL = 'https://www.anjuke.com/sy-city.html'
 CITY_INFO_TABLE = 'city_info'
 
 def UpdateTable_city_info(DB, Logger, url = ANJUKE_CITY_INFO_URL):
-	city_homepage_url_dict = GetAnjukeCityUrl(url)
-	city_rent_url_dict = GetAnjukeCityZuUrl(city_homepage_url_dict)
-	for city, homepage_url in city_homepage_url_dict:
+	try:
+		city_homepage_url_dict = GetAnjukeCityUrl(url)
+		city_rent_url_dict = GetAnjukeCityZuUrl(city_homepage_url_dict)
+	except Exception as err:
+		trace = traceback.format_exc()
+		msg = "[Exception] %s\n%s" % (str(err), trace);
+		print(f'Error update table city_info!')
+		Logger.error(msg)
+				
+	for city, rent_url in city_rent_url_dict.items():
 		fields = {}
 		fields['city_name'] = city
-		fields['anjuke_homepage_url'] = homepage_url
-		fields['anjuke_rent_url'] = city_rent_url_dict[city]
+		fields['anjuke_homepage_url'] = city_homepage_url_dict[city]
+		fields['anjuke_rent_url'] = rent_url
 		if DB.insert(CITY_INFO_TABLE, fields):                
-			Logger.info("Insert table[%s] city_name[%s], anjuke_homepage_url[%s] anjuke_rent_url[%s] ok!" % (CITY_INFO_TABLE, fields["city_name"], homepage_url, fields['anjuke_rent_url']));            
+			Logger.info("insert table[%s] city_name[%s], anjuke_homepage_url[%s] anjuke_rent_url[%s] ok!" % (CITY_INFO_TABLE, fields["city_name"], fields['anjuke_homepage_url'], fields['anjuke_rent_url']));            
 		else:            
-			Logger.error("Insert table[%s] city_info city_name[%s], anjuke_homepage_url[%s] anjuke_rent_url[%s] failed! error[%s]" \
-                           % (CITY_INFO_TABLE, fields["city_name"], homepage_url, fields['anjuke_rent_url'], DB.get_last_error()));
+			Logger.error("insert table[%s] city_info city_name[%s], anjuke_homepage_url[%s] anjuke_rent_url[%s] failed! error[%s]" \
+                           % (CITY_INFO_TABLE, fields["city_name"], fields['anjuke_homepage_url'], fields['anjuke_rent_url'], DB.get_last_error()));
 		
 	pass 
 	
@@ -88,12 +95,14 @@ def GetAnjukeCityUrl(url = ANJUKE_CITY_INFO_URL):
 		for city_item_soup in city_list_soup.find_all('a'):
 			city = city_item_soup.getText().strip()
 			c_url = city_item_soup['href']
-			citys_url_dict[city] = c_url			
+			citys_url_dict[city] = c_url
+			break
 	return citys_url_dict
 
 def GetAnjukeCityZuUrl(city_url_dict):
 	city_zuurl_dict = dict()
 	for city, c_url in city_url_dict.items():
+		time.sleep(0.1)
 		html = DownloadPage(c_url)		
 		soup = BeautifulSoup(html,'html.parser')
 		ul_soup=soup.find('ul', attrs={'class':'L_tabsnew'})
@@ -121,4 +130,11 @@ if __name__ == '__main__':
 		3306, 
 		'house_info'
 	)
+	DB.query('SET NAMES UTF8')
 	UpdateTable_city_info(DB, Logger, ANJUKE_CITY_INFO_URL)
+	#city_homepage_url_dict = GetAnjukeCityUrl(ANJUKE_CITY_INFO_URL)
+	#city_rent_url_dict = GetAnjukeCityZuUrl(city_homepage_url_dict)
+	
+	
+	
+	

@@ -23,7 +23,7 @@ class MySQL:
 
     def connect(self):
         try:
-            self.conn=pymysql.connect(host=self.host,port=self.port,user=self.user,passwd=self.password)
+            self.conn=pymysql.connect(host=self.host,port=self.port,user=self.user,passwd=self.password,charset=self.charset)
             self.conn.autocommit(True);
             self.cur=self.conn.cursor()
             if self.db != '' :self.conn.select_db(self.db)
@@ -83,7 +83,22 @@ class MySQL:
             self.error = e.args[1];
             if self.error.find('server has gone away') != -1: self.connect();
             return False;
-
+    def replace(self,table_name,data):
+        self.error = 'ok';
+        columns=data.keys()
+        _prefix="".join(['INSERT INTO `',table_name,'` '])
+        _fields=",".join(["".join(['`',column,'`']) for column in columns])
+        _values=",".join(["%s" for i in range(len(columns))])
+        _sql="".join([_prefix,"(",_fields,") VALUES (",_values,")"])
+        _params=[data[key] for key in columns]
+        try:
+            self.sql = _sql % tuple(_params)
+            self.cur.execute(_sql,tuple(_params))
+            return True;
+        except pymysql.Error as e:
+            self.error = e.args[1];
+            if self.error.find('server has gone away') != -1: self.connect();
+            return False;
     def update(self,tbname,data,condition = ''):
         self.error = 'ok';
         _fields=[]
