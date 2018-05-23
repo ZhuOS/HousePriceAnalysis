@@ -387,37 +387,46 @@ def ParseComHtml(url):
 RENT_INFO_TABLE = 'rent_info'
 SHENZHEN_HOMEPAGE_URL='https://shenzhen.anjuke.com'
 def GetAnjukeRentInfo(DB, Logger):
-	sql_string = f'SELECT city_id,city_name FROM {CITY_INFO_TABLE}'
-	if not DB.query(sql_string):
-		Logger.error("sql[%s], error[%s]", sql_string, DB.get_last_error())
-		return
-	city_list = DB.fetch_all()
-	for city_name in city_list:
-		GetRentHouseInfo(DB, Logger, city_name)
+	try:
+		sql_string = f'SELECT city_id,city_name,anjuke_rent_url FROM {CITY_INFO_TABLE}'
+		if not DB.query(sql_string):
+			Logger.error("sql[%s], error[%s]", sql_string, DB.get_last_error())
+			return
+		city_list = DB.fetch_all()
+		for row in city_list:
+			if row['anjuke_rent_url'] != '':		
+				if TESTING:
+					print(row['city_name'])
+				GetRentHouseInfo(DB, Logger, row['city_name'])
+	except Exception as err:
+		trace = traceback.format_exc()
+		msg = "[Exception] %s\n%s" % (str(err), trace)		
+		Logger.error(msg)
+		if TESTING:
+			print(f'Error[Get anjuke rent information]:{msg}')
+		return None
 	pass	
 def GetRentHouseInfo(DB, Logger, city_name):
-	sql_string = f"SELECT city_id, anjuke_rent_url FROM {CITY_INFO_TABLE} \
-		WHERE city_name='{city_name}'"
+	sql_string = f"SELECT city_id, anjuke_rent_url FROM {CITY_INFO_TABLE} WHERE city_name='{city_name}'"
 	if not DB.query(sql_string):
 		Logger.error("sql[%s], error[%s]", sql_string, DB.get_last_error())
 		return None
 	rows = DB.fetch_all()
 	if len(rows) == 0:
 		Logger.error("sql[%s], error[no data]", sql_string)
+		return None
 	city_id = rows[0]['city_id']
 	rent_url = f"{rows[0]['anjuke_rent_url']}fangyuan/px7"
-	
+	#rent_url = 'https://cd.zu.anjuke.com/fangyuan/p4-px7/'
 	house_info_list = []
 	index = 1
 	while rent_url:
 		print(f'{index}:{rent_url}')		
-		house_page_list, rent_url = ParseRentHtml(DB, Logger,city_id, rent_url)
+		house_page_list, rent_url = ParseRentHtml(DB, Logger, city_id, rent_url)
 		if house_page_list != None:
 			house_info_list.extend(house_page_list)
 		index += 1
-	return house_info_list
-		
-		
+	return house_info_list		
 	pass
 def ParseRentHtml(DB, Logger, city_id, rent_url):
 	html = DownloadPage(rent_url)
@@ -431,25 +440,23 @@ def ParseRentHtml(DB, Logger, city_id, rent_url):
 		district = ''
 		block = ''
 		street = ''
-		address_arr = address_detail.getText().split()
+		address_str = address_detail.getText().strip()
+		address_arr = address_str.split()		
 		if len(address_arr) >= 1:
 			community = address_arr[0]
-		if len(address_arr) >= 2:
+		if len(address_arr) < 2 or len(address_arr[1].strip().split('-')) !=2:
+			street = address_str
+			msg = f'Error parse rent url[{rent_url}] address_arr[{address_arr}]'
+			Logger.error(msg)
+			print(msg)
+		else:
 			district_block = address_arr[1].strip().split('-')
-			if len(district_block) != 2:
-				msg = f'Error parse rent url[{rent_url} district_block[{district_block}]]'
-				Logger.error(msg)
-				print(msg)
-				return None, None
 			district = district_block[0]
 			block = district_block[1]
 		if len(address_arr) >= 3:
 			street = address_arr[2].strip()
 		if TESTING:
-			print(community)	
-			
-				
-			
+			print(community)			
 		other_detail = house_item.find('p',attrs={'class':'details-item tag'}).getText().strip().split('\ue147')
 		if len(other_detail) == 2:
 			contact = other_detail[1].strip()
@@ -457,18 +464,20 @@ def ParseRentHtml(DB, Logger, city_id, rent_url):
 			contact = ''		
 		other_parm = other_detail[0].split('|')
 		if len(other_parm) != 3:
-			msg = f'Error parse rent url[{rent_url} other_parm[{other_parm}]]'
+			room_num = -1
+			hall_num = -1
+			area = -1
+			floor = 0
+			msg = f'Error parse rent url[{rent_url}] other_parm[{other_parm}]'
 			Logger.error(msg)
-			print(msg)
-			return None, None
-		room_num = int(StringSplit(other_parm[0],'室'))
-		hall_num = int(StringSplit(other_parm[0].split('室')[1],'厅'))
-		area = int(StringSplit(other_parm[1], '平'))
-		floor = int(StringSplit(other_parm[2], '/'))
+			print(msg)			
+		else:
+			room_num = int(StringSplit(other_parm[0],'室'))
+			hall_num = int(StringSplit(other_parm[0].split('室')[1],'厅'))
+			area = float(StringSplit(other_parm[1], '平'))
+			floor = int(StringSplit(other_parm[2], '/'))
 		rent_type = house_item.find('span', attrs={'class':'cls-1'}).getText()
-		#rent_type = RENT_TYPE[rent_type]
 		orientation = house_item.find('span', attrs={'class':'cls-2'}).getText()
-		#orientation = ORIENTATION[orientation]
 		subway_soup = house_item.find('span', attrs={'class':'cls-3'})
 		subway = ''
 		if subway_soup:
@@ -490,10 +499,8 @@ def ParseRentHtml(DB, Logger, city_id, rent_url):
 		fields['orientation'] = orientation
 		fields['subway'] = subway
 		fields['remark'] = remark
-		house_info_list.append(fields)
-		
-		UpdateRentInfo(DB, Logger, fields)
-		
+		house_info_list.append(fields)		
+		UpdateRentInfo(DB, Logger, fields)		
 	next_page = soup.find('a',attrs={'class':'aNxt'})
 	if next_page:
 		return house_info_list, next_page['href']
@@ -504,14 +511,12 @@ RENT_TYPE = {'整租':0, '合租':1}
 ORIENTATION = {	'朝东':1,'朝西':2,'朝南':3,'朝北':4,\
 				'东南':13,'西南':23,'东北':14,'西北':24,\
 				'东西':12,'南北':34,'不知道朝向':0}
-def UpdateRentInfo(DB, Logger, rent_info):
-	'''
-	Insert data to database
-	'''
-	fields = {}
+def QueryCommunityID(DB, Logger,rent_info):
 	cm_name = rent_info['cm_name']
-	sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} \
-		WHERE cm_name='{cm_name}'"
+	if cm_name == '' or cm_name == '暂无小区':
+		return None
+	sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} WHERE \
+		cm_name='{cm_name}' and city_id={rent_info['city_id']} and district='{rent_info['district']}'"
 	if not DB.query(sql_string):		
 		Logger.error("sql[%s], error[%s]", sql_string, DB.get_last_error())
 		return None
@@ -534,7 +539,7 @@ def UpdateRentInfo(DB, Logger, rent_info):
 			if TESTING:
 				print(msg)
 			Logger.error(msg)
-			
+			return None
 		sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} WHERE cm_name='{cm_name}'"
 		if not DB.query(sql_string):
 			msg = f"Error: sql[{sql_string}], error[{DB.get_last_error()}]"
@@ -549,15 +554,29 @@ def UpdateRentInfo(DB, Logger, rent_info):
 				print(msg)
 			Logger.error(msg)
 			return None
-	fields['cm_id'] = rows[0]['cm_id']
+	return rows[0]['cm_id']
+def UpdateRentInfo(DB, Logger, rent_info):
+	'''
+	Insert data to database
+	'''
+	fields = {}
+	cm_id = QueryCommunityID(DB, Logger, rent_info)
+	if cm_id:
+		fields['cm_id'] = cm_id
 	fields['h_rent'] = rent_info['h_rent']
 	fields['h_area'] = rent_info['h_area']
 	fields['floor'] = rent_info['floor']
 	fields['room_num'] = rent_info['room_num']
 	fields['hall_num'] = rent_info['hall_num']
 	fields['contact'] = rent_info['contact']
-	fields['rent_type'] = RENT_TYPE[rent_info['rent_type']]
-	fields['h_orientation'] = ORIENTATION[rent_info['orientation']]
+	if rent_info['rent_type'] in RENT_TYPE:
+		fields['rent_type'] = RENT_TYPE[rent_info['rent_type']]
+	else:
+		fields['rent_type'] = -1
+	if rent_info['orientation'] in ORIENTATION:
+		fields['h_orientation'] = ORIENTATION[rent_info['orientation']]
+	else:
+		fields['h_orientation'] = 0
 	fields['subway'] = rent_info['subway']
 	fields['remark'] = rent_info['remark']
 	if DB.insert(RENT_INFO_TABLE, fields): 
@@ -586,5 +605,5 @@ if __name__ == '__main__':
 	#print('Update 深圳 Community Informations')
 	#info_list = GetCityAllComInfo(SHENZHEN_HOMEPAGE_URL)
 	#UpdateCityComInfo(DB, Logger, 636, info_list)
-	print('Update Anjuke Rent Informations of SHENZHEN')
-	GetRentHouseInfo(DB, Logger, '深圳')
+	print('Update Anjuke Rent Informations for all cities')
+	GetAnjukeRentInfo(DB, Logger)
