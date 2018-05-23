@@ -22,11 +22,17 @@ def DownloadPage(url):
 		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'
 	}).content
 	return html
-def StringSplit(str,char):
-	idx = str.find(char)
-	if idx == -1:
-		return str
-	return str[:idx]	
+def StringSplit(str,char,type = 0):
+	if type == 0:
+		idx = str.find(char)
+		if idx == -1:
+			return str
+		return str[:idx]	
+	else:
+		idx = str.rfind(char)
+		if idx < 0 or idx >= len(str)-1:
+			return None
+		return str[idx+1:]
 	pass
 def Write2File(house_data):
 	fp = codecs.open('data/house_info', 'wb', encoding='utf-8')
@@ -73,7 +79,7 @@ def UpdateCityInfoFromAnjuke(DB, Logger, url = ANJUKE_CITY_INFO_URL):
 				continue
 		else:
 			city_id = rows[0]['city_id']
-			if DB.update(CITY_INFO_TABLE, fields, "city_id = '%s'" % city_id ):				
+			if DB.update(CITY_INFO_TABLE, fields, f"city_id={city_id}"):				
 				if DB.rowcount() == 1:
 					Logger.info("update table[%s] successfully!" % CITY_INFO_TABLE);
 				if TESTING:
@@ -135,6 +141,7 @@ def GetAnjukeCityZuUrl(city_url_dict):
 #Update district_info table'
 #Only for districts having rentint house
 '''
+'''
 def UpdateDistrictInfoFromAnjuke(DB, Logger):
 	sql_string = "SELECT city_id,city_name,anjuke_rent_url FROM city_info WHERE anjuke_rent_url!=''"
 	if not DB.query(sql_string):
@@ -186,6 +193,7 @@ def UpdateDistrictInfoFromAnjuke(DB, Logger):
 					Logger.error("update table[%s] error! sqlerror[%s]" % (DISTRICT_INFO_TABLE, DB.get_last_error()));		
 	pass
 '''
+'''
 #Update community information
 '''
 def GetAnjukeComInfo(DB, Logger):
@@ -202,8 +210,9 @@ def GetAnjukeComInfo(DB, Logger):
 		if TESTING:
 			print(f"{city_name}:")
 		homepage_url = row['anjuke_homepage_url']
-		info_list = GetCityAllComInfo(homepage_url)
+		info_list = GetCityAllComInfo(Logger, homepage_url)
 		UpdateCityComInfo(DB, Logger, city_id, info_list)
+		#break
 	pass
 # Update table community_info
 def UpdateCityComInfo(DB, Logger, city_id, info_list):
@@ -212,6 +221,7 @@ def UpdateCityComInfo(DB, Logger, city_id, info_list):
 	for fields in info_list:
 		fields['city_id'] = city_id
 		cm_name = fields['cm_name']
+		'''
 		sql_string = f"SELECT district_id FROM {DISTRICT_INFO_TABLE} WHERE \
 			district_name ='{fields['district_name']}'"
 		if not DB.query(sql_string):
@@ -223,73 +233,85 @@ def UpdateCityComInfo(DB, Logger, city_id, info_list):
 			continue
 		fields['district_id'] = rows[0]['district_id']		
 		del fields['district_name']
+		'''
 		# update
 		sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} WHERE \
-			cm_name='{fields['cm_name']}' AND city_id={fields['city_id']}"
+			cm_name='{fields['cm_name']}' AND city_id={fields['city_id']} AND district='{fields['district']}'"
 		if not DB.query(sql_string):
 			Logger.error("sql[%s], error[%s]", sql_string, DB.get_last_error())
 			continue
 		rows = DB.fetch_all()
 		if len(rows) <= 0: 			
 			if DB.insert(COMMUNITY_INFO_TABLE, fields):                
-				Logger.info("insert table[%s] city_id[%s], district_id[%s] cm_name[%s] ok!" \
-				% (COMMUNITY_INFO_TABLE, fields["city_id"], fields['district_id'], fields['cm_name']));            
-			if TESTING:
-					print(f'insert {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] successfully')
-				
+				Logger.info("insert table[%s] city_id[%s], district[%s] cm_name[%s] ok!" \
+				% (COMMUNITY_INFO_TABLE, fields["city_id"], fields['district'], fields['cm_name']));            
+				if TESTING:
+					print(f'insert {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] successfully')				
 			else:            
-				Logger.error("insert table[%s] city_id[%s], district_id[%s] cm_name[%s] failed! error[%s]" %\
-					(COMMUNITY_INFO_TABLE, fields["city_id"], fields['district_id'], fields['cm_name'], DB.get_last_error()));
+				Logger.error("insert table[%s] city_id[%s], district[%s] cm_name[%s] failed! error[%s]" %\
+					(COMMUNITY_INFO_TABLE, fields["city_id"], fields['district'], fields['cm_name'], DB.get_last_error()));
 				if TESTING:
 					print(f'insert {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] failed')				
 				continue
 		else:
 			cm_id = rows[0]['cm_id']
-			if DB.update(COMMUNITY_INFO_TABLE, fields, "cm_id = '%s'" % cm_id ):
+			if DB.update(COMMUNITY_INFO_TABLE, fields, f"cm_id={cm_id}"):
 				if DB.rowcount() == 1:
 					Logger.info("update table[%s] successfully!" % COMMUNITY_INFO_TABLE);
 				if TESTING:
-					print(f'update {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] successfully')
-				
+					print(f'update {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] successfully')				
 			else:
 				Logger.error("update table[%s] error! sqlerror[%s]" \
 					% (COMMUNITY_INFO_TABLE, DB.get_last_error()));
 				if TESTING:
-					print(f'update {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] failed')
-				
+					print(f'update {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] failed')				
 	pass	
 # Get all community informations
-def GetCityAllComInfo(city_homepage_url):
+def GetCityAllComInfo(Logger, city_homepage_url):
 	if not city_homepage_url:
 		return None
 	com_url = f'{city_homepage_url}/community'
 	info_list = []
-	'''
-	if TESTING:
-		count = 0
-	'''
+	#if TESTING:
+	#	count = 0
 	while com_url:
-		com_info_list, com_url = GetCityPageComInfo(com_url)
+		com_info_list, com_url = GetCityPageComInfo(Logger, com_url)
 		if com_info_list is not None:
 			info_list.extend(com_info_list)
-		'''
-		if TESTING:
-			count += 1
-			if count == 2:
-				break
-		'''
+		#if TESTING:
+		#	count += 1
+		#	if count == 2:
+		#		break
 	return info_list
 # Get current page information	
-def GetCityPageComInfo(com_url):
+def GetCityPageComInfo(Logger, com_url):
 	html = DownloadPage(com_url)
 	soup = BeautifulSoup(html,'html.parser')
 	list_soup = soup.find('div', attrs={'class':'list-content'})
 	com_info_list = []
 	for item_soup in list_soup.find_all('div', attrs={'class':'li-itemmod'}):
 		#parse community informations
-		com_info_url = item_soup['link']
-		com_infos = ParseComHtml(com_info_url)
+		com_info_url = item_soup['link'].strip()
+		cmmid = StringSplit(com_info_url,"/",1)
+		if cmmid == None:
+			msg = f"Url[{com_url}],error[cann't find cmmid form {com_info_url}]!"
+			Logger.error(msg)
+			if TESTING:
+				print(f'Error:{msg}')
+			continue
+		if TESTING:
+			print(cmmid)
+		aver_price_soup = item_soup.find('strong')
+		aver_price = aver_price_soup.getText().strip()
+		if aver_price == '暂无数据' or aver_price == '暂无' or aver_price =='':
+			com_infos['aver_price'] = ''
+		else:
+			aver_price = float(aver_price)
+		
+		com_infos = ParseComHtml(Logger, com_info_url)
 		if com_infos is not None:
+			com_infos['anjuke_cmmid'] = cmmid
+			com_infos['aver_price'] = aver_price
 			com_info_list.append(com_infos)
 		
 	next_page = soup.find('a',attrs={'class':'aNxt'})
@@ -298,7 +320,7 @@ def GetCityPageComInfo(com_url):
 	else:
 		return com_info_list, None
 # Parse current page information
-def ParseComHtml(url):
+def ParseComHtml(Logger, url):
 	com_infos = {}
 	try:
 		html = DownloadPage(url)
@@ -307,18 +329,11 @@ def ParseComHtml(url):
 		com_infos['cm_name'] = position_soup.getText().strip().split()[0]
 		posi_details = position_soup.find('span').getText().strip()
 		posi_details = posi_details.split('-',3)
-
-		com_infos['district_name'] = posi_details[0]
+		com_infos['district'] = posi_details[0]
 		com_infos['block'] = posi_details[1]
 		com_infos['street'] = posi_details[2]
 		detail_soup = soup.find('div', attrs={'class':'basic-infos-box'})
-		'''
-		aver_price_soup = detail_soup.find('span',attrs={'class':'average'})
-		aver_price = aver_price_soup.getText().strip()
-		print(aver_price)
-		if aver_price != '暂无数据' and aver_price != '暂无':
-			com_infos['aver_price'] = int(aver_price)
-		'''
+		
 		params_soup = detail_soup.find('dl', attrs={'class':'basic-parms-mod'})
 		params_list = params_soup.find_all('dd')
 		if len(params_list) < 10:
@@ -363,6 +378,7 @@ def ParseComHtml(url):
 		trace = traceback.format_exc()
 		msg = "[Exception] %s\n%s" % (str(err), trace);
 		print(f'Error[{url}]:{msg}')
+		Logger.error(msg)
 		return None
 	if TESTING:
 		print(f"	{com_infos['cm_name']}")
@@ -370,7 +386,6 @@ def ParseComHtml(url):
 '''
 #Update house-renting informations
 '''
-
 def GetAnjukeRentInfo(DB, Logger):
 	try:
 		sql_string = f'SELECT city_id,city_name,anjuke_rent_url FROM {CITY_INFO_TABLE}'
@@ -421,6 +436,11 @@ def ParseRentHtml(DB, Logger, city_id, rent_url):
 	for house_item in house_list_soup.find_all('div', attrs={'class':'zu-itemmod'}):
 		rent_price = int(house_item.find('strong').getText())
 		address_detail = house_item.find('address')
+		# get community id
+		cmmid_soup = address_detail.find('a')
+		cmmid = ''
+		if cmmid_soup:
+			cmmid = StringSplit(cmmid_soup['href'].strip(), "/",1)
 		community = ''
 		district = ''
 		block = ''
@@ -467,7 +487,19 @@ def ParseRentHtml(DB, Logger, city_id, rent_url):
 		subway = ''
 		if subway_soup:
 			subway = subway_soup.getText()		
-		remark = house_item.find('h3').getText().strip()
+		remark_soup = house_item.find('h3').find('a')
+		remark = remark_soup['title'].strip()
+		house_url = remark_soup['href'].strip()
+		house_id = StringSplit(house_url, "/",1)
+		if TESTING:
+			print(f"{house_id}:{community}")
+		if house_id == None:
+			msg = f"Url[{rent_url}],error[cann't find house_id form {house_url}]!"
+			Logger.error(msg)
+			if TESTING:
+				print(f'Error:{msg}')
+			continue
+			
 		fields = {}
 		fields['city_id'] = city_id
 		fields['h_rent'] = rent_price
@@ -484,6 +516,8 @@ def ParseRentHtml(DB, Logger, city_id, rent_url):
 		fields['orientation'] = orientation
 		fields['subway'] = subway
 		fields['remark'] = remark
+		fields['anjuke_hid'] = house_id
+		fields['anjuke_cmmid'] = cmmid
 		house_info_list.append(fields)		
 		UpdateRentInfo(DB, Logger, fields)		
 	next_page = soup.find('a',attrs={'class':'aNxt'})
@@ -495,7 +529,54 @@ RENT_TYPE = {'整租':0, '合租':1}
 ORIENTATION = {	'朝东':1,'朝西':2,'朝南':3,'朝北':4,\
 				'东南':13,'西南':23,'东北':14,'西北':24,\
 				'东西':12,'南北':34,'不知道朝向':-1}
-def QueryCommunityID(DB, Logger,rent_info):
+def QueryCmidFromID(DB, Logger,rent_info):
+	anjuke_cmmid = rent_info['anjuke_cmmid']
+	if anjuke_cmmid == '':
+		return None	
+	sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} WHERE anjuke_cmmid='{anjuke_cmmid}'"
+	if not DB.query(sql_string):		
+		Logger.error("sql[%s], error[%s]", sql_string, DB.get_last_error())
+		return None
+	rows = DB.fetch_all()
+	if len(rows) > 0:
+		return rows[0]['cm_id']
+	
+	cm_fields = {}
+	cm_fields['anjuke_cmmid'] = anjuke_cmmid
+	cm_fields['cm_name'] = rent_info['cm_name']
+	cm_fields['city_id'] = rent_info['city_id']
+	cm_fields['district'] = rent_info['district']
+	cm_fields['block'] = rent_info['block']
+	cm_fields['street'] = rent_info['street']
+	cm_fields['subway'] = rent_info['subway']
+	if DB.insert(COMMUNITY_INFO_TABLE, cm_fields):   
+		msg = f"insert table[{COMMUNITY_INFO_TABLE}] city_id[{cm_fields['city_id']}] cm_name[{cm_fields['cm_name']}] ok!"
+		if TESTING:
+			print(msg)
+		Logger.info(msg)           
+	else:
+		msg = f'Error: insert table[{COMMUNITY_INFO_TABLE}] cm_name[{cm_name}]  error[{DB.get_last_error}]'
+		if TESTING:
+			print(msg)
+		Logger.error(msg)
+		return None
+	sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} WHERE anjuke_cmmid='{anjuke_cmmid}'"
+	if not DB.query(sql_string):
+		msg = f"Error: sql[{sql_string}], error[{DB.get_last_error()}]"
+		if TESTING:
+			print(msg)
+		Logger.error(msg)
+		return None
+	rows = DB.fetch_all()
+	if len(rows) <= 0:
+		msg = f"Error: sql[{sql_string}], error[return None]"
+		if TESTING:
+			print(msg)
+		Logger.error(msg)
+		return None
+	return rows[0]['cm_id']		
+		
+def QueryCmidFromName(DB, Logger, rent_info):
 	cm_name = rent_info['cm_name']
 	if cm_name == '' or cm_name == '暂无小区':
 		return None
@@ -505,47 +586,51 @@ def QueryCommunityID(DB, Logger,rent_info):
 		Logger.error("sql[%s], error[%s]", sql_string, DB.get_last_error())
 		return None
 	rows = DB.fetch_all()
-	if len(rows) <=0:
-		cm_fields = {}
-		cm_fields['cm_name'] = cm_name
-		cm_fields['city_id'] = rent_info['city_id']
-		cm_fields['district'] = rent_info['district']
-		cm_fields['block'] = rent_info['block']
-		cm_fields['street'] = rent_info['street']
-		cm_fields['subway'] = rent_info['subway']	
-		if DB.insert(COMMUNITY_INFO_TABLE, cm_fields):   
-			msg = f"insert table[{COMMUNITY_INFO_TABLE}] city_id[{cm_fields['city_id']}] cm_name[{cm_fields['cm_name']}] ok!"
-			if TESTING:
-				print(msg)
-			Logger.info(msg)           
-		else:
-			msg = f'Error: insert table[{COMMUNITY_INFO_TABLE}] cm_name[{cm_name}]  error[{DB.get_last_error}]'
-			if TESTING:
-				print(msg)
-			Logger.error(msg)
-			return None
-		sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} WHERE cm_name='{cm_name}'"
-		if not DB.query(sql_string):
-			msg = f"Error: sql[{sql_string}], error[{DB.get_last_error()}]"
-			if TESTING:
-				print(msg)
-			Logger.error(msg)
-			return None
-		rows = DB.fetch_all()
-		if len(rows) <= 0:
-			msg = f"Error: sql[{sql_string}], error[return None]"
-			if TESTING:
-				print(msg)
-			Logger.error(msg)
-			return None
+	if len(rows) > 0:
+		return rows[0]['cm_id']
+	cm_fields = {}
+	cm_fields['cm_name'] = cm_name
+	cm_fields['city_id'] = rent_info['city_id']
+	cm_fields['district'] = rent_info['district']
+	cm_fields['block'] = rent_info['block']
+	cm_fields['street'] = rent_info['street']
+	cm_fields['subway'] = rent_info['subway']	
+	if DB.insert(COMMUNITY_INFO_TABLE, cm_fields):   
+		msg = f"insert table[{COMMUNITY_INFO_TABLE}] city_id[{cm_fields['city_id']}] cm_name[{cm_fields['cm_name']}] ok!"
+		if TESTING:
+			print(msg)
+		Logger.info(msg)           
+	else:
+		msg = f'Error: insert table[{COMMUNITY_INFO_TABLE}] cm_name[{cm_name}]  error[{DB.get_last_error}]'
+		if TESTING:
+			print(msg)
+		Logger.error(msg)
+		return None
+	sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} WHERE cm_name='{cm_name}'"
+	if not DB.query(sql_string):
+		msg = f"Error: sql[{sql_string}], error[{DB.get_last_error()}]"
+		if TESTING:
+			print(msg)
+		Logger.error(msg)
+		return None
+	rows = DB.fetch_all()
+	if len(rows) <= 0:
+		msg = f"Error: sql[{sql_string}], error[return None]"
+		if TESTING:
+			print(msg)
+		Logger.error(msg)
+		return None
 	return rows[0]['cm_id']
+	
 def UpdateRentInfo(DB, Logger, rent_info):
 	'''
 	Insert data to database
 	'''
 	fields = {}
-	cm_id = QueryCommunityID(DB, Logger, rent_info)
-	if cm_id:
+	cm_id = QueryCmidFromID(DB, Logger, rent_info)
+	if cm_id == None:
+		cm_id = QueryCmidFromName(DB, Logger, rent_info)
+	if cm_id != None:
 		fields['cm_id'] = cm_id
 	fields['h_rent'] = rent_info['h_rent']
 	fields['h_area'] = rent_info['h_area']
@@ -563,30 +648,60 @@ def UpdateRentInfo(DB, Logger, rent_info):
 		fields['h_orientation'] = -1
 	fields['subway'] = rent_info['subway']
 	fields['remark'] = rent_info['remark']
-	if DB.insert(RENT_INFO_TABLE, fields): 
-		msg = f"Insert {RENT_INFO_TABLE} community[{rent_info['cm_name']}] remark[{rent_info['remark']}] ok!"
-		Logger.info(msg);            
+	fields['anjuke_hid'] = rent_info['anjuke_hid']
+	sql_string = f"SELECT h_id FROM {RENT_INFO_TABLE} WHERE anjuke_hid='{rent_info['anjuke_hid']}'"
+	if not DB.query(sql_string):
+		msg = f"sql[{sql_string}, error[{DB.get_last_error()}]]"
 		if TESTING:
-			print(msg)
-	else:            
-		Logger.error("Insert table[%s] community[%s], remark[%s] failed! error[%s]" \
-			% (RENT_INFO_TABLE, rent_info['cm_name'], rent_info['remark'], DB.get_last_error()));
-		if TESTING:
-			print(f"Insert {RENT_INFO_TABLE} community[{rent_info['cm_name']}] remark[{rent_info['remark']}] failed!")	
+			print(f"Error:{msg}")
+		Logger.error(msg)
+		return False
+	rows = DB.fetch_all()
+	if len(rows) <= 0: 	
+		if DB.insert(RENT_INFO_TABLE, fields): 
+			msg = f"Insert {RENT_INFO_TABLE} community[{rent_info['cm_name']}] remark[{rent_info['remark']}] ok!"
+			Logger.info(msg);            
+			if TESTING:
+				print(msg)
+			return True
+		else:            
+			Logger.error("Insert table[%s] community[%s], remark[%s] failed! error[%s]" \
+				% (RENT_INFO_TABLE, rent_info['cm_name'], rent_info['remark'], DB.get_last_error()));
+			if TESTING:
+				print(f"Insert {RENT_INFO_TABLE} community[{rent_info['cm_name']}] remark[{rent_info['remark']}] failed!")	
+			return False
+	else:
+		h_id = rows[0]['h_id']
+		if DB.update(RENT_INFO_TABLE, fields, f"h_id={h_id}"):
+			msg = f"Update {RENT_INFO_TABLE} community[{rent_info['cm_name']}] remark[{rent_info['remark']}] ok!"
+			if DB.rowcount() == 1:
+				Logger.info(msg);
+			if TESTING:
+				print(msg)
+			return True
+		else:
+			Logger.error("update table[%s] error! sqlerror[%s]" \
+				% (RENT_INFO_TABLE, DB.get_last_error()));
+			if TESTING:
+				print(f"update {RENT_INFO_TABLE} community[{rent_info['cm_name']}] failed")
+			return False
 
-	pass
 	
 if __name__ == '__main__':
 	cfgs = common.CommonHelper.ReadIniFile(CFG_PATH)
-	print(cfgs)
 	Logger = common.CommonHelper.GetLogger('%s/%s.log' % (cfgs['log']['path'], time.strftime("%Y%m%d")));
 	DB = common.MySQLHelper.MySQL('127.0.0.1', 'root','', 3306, 'house_info')
 	DB.query('SET NAMES UTF8')
+	'''
 	print('Update City Informations')
 	UpdateCityInfoFromAnjuke(DB, Logger, ANJUKE_CITY_INFO_URL)
-	print('Update District Informations')
-	UpdateDistrictInfoFromAnjuke(DB, Logger)
+	#print('Update District Informations')
+	#UpdateDistrictInfoFromAnjuke(DB, Logger)
 	print('Update Community Informations')
 	GetAnjukeComInfo(DB, Logger)
 	print('Update Anjuke Rent Informations for all cities')
 	GetAnjukeRentInfo(DB, Logger)
+	'''
+	#GetAnjukeComInfo(DB, Logger)
+	GetRentHouseInfo(DB, Logger, '深圳')
+	
