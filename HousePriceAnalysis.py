@@ -275,6 +275,8 @@ def GetCityAllComInfo(Logger, city_homepage_url):
 	#if TESTING:
 	#	count = 0
 	while com_url:
+		if TESTING:
+			print(com_url)
 		com_info_list, com_url = GetCityPageComInfo(Logger, com_url)
 		if com_info_list is not None:
 			info_list.extend(com_info_list)
@@ -300,13 +302,21 @@ def GetCityPageComInfo(Logger, com_url):
 				print(f'Error:{msg}')
 			continue
 		if TESTING:
-			print(cmmid)
+			print(f"{cmmid}:",end='')
 		aver_price_soup = item_soup.find('strong')
-		aver_price = aver_price_soup.getText().strip()
-		if aver_price == '暂无数据' or aver_price == '暂无' or aver_price =='':
-			com_infos['aver_price'] = ''
+		aver_price = -1
+		if aver_price_soup:
+			aver_price = aver_price_soup.getText().strip()
+			if aver_price == '暂无数据' or aver_price == '暂无' or aver_price =='':
+				com_infos['aver_price'] = ''
+			else:
+				aver_price = float(aver_price)
 		else:
-			aver_price = float(aver_price)
+			msg = f"Url[{com_url}],error[cann't find aver_price form {com_info_url}]!"
+			Logger.error(msg)
+			if TESTING:
+				print(f'Error:{msg}')
+			
 		
 		com_infos = ParseComHtml(Logger, com_info_url)
 		if com_infos is not None:
@@ -692,7 +702,7 @@ if __name__ == '__main__':
 	Logger = common.CommonHelper.GetLogger('%s/%s.log' % (cfgs['log']['path'], time.strftime("%Y%m%d")));
 	DB = common.MySQLHelper.MySQL('127.0.0.1', 'root','', 3306, 'house_info')
 	DB.query('SET NAMES UTF8')
-	'''
+	
 	print('Update City Informations')
 	UpdateCityInfoFromAnjuke(DB, Logger, ANJUKE_CITY_INFO_URL)
 	#print('Update District Informations')
@@ -701,7 +711,6 @@ if __name__ == '__main__':
 	GetAnjukeComInfo(DB, Logger)
 	print('Update Anjuke Rent Informations for all cities')
 	GetAnjukeRentInfo(DB, Logger)
-	'''
-	#GetAnjukeComInfo(DB, Logger)
-	GetRentHouseInfo(DB, Logger, '深圳')
+	
+	
 	
