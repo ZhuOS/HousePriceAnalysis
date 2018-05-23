@@ -1,4 +1,4 @@
-#coding:utf8
+#coding=utf8
 import codecs
 import requests
 from bs4 import BeautifulSoup
@@ -9,8 +9,14 @@ import traceback
 #import sys
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
-DOWNLOAD_URL = 'https://sz.zu.anjuke.com/'
 TESTING = True
+CFG_PATH='.\conf\configure.ini'
+ANJUKE_CITY_INFO_URL = 'https://www.anjuke.com/sy-city.html'
+SHENZHEN_HOMEPAGE_URL='https://shenzhen.anjuke.com'
+CITY_INFO_TABLE = 'city_info'
+DISTRICT_INFO_TABLE = 'district_info'
+COMMUNITY_INFO_TABLE = 'community_info'
+RENT_INFO_TABLE = 'rent_info'
 def DownloadPage(url):	
 	html = requests.get(url, headers={
 		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'
@@ -22,17 +28,6 @@ def StringSplit(str,char):
 		return str
 	return str[:idx]	
 	pass
-
-def GetHouseInfo(url):
-	house_info_list = []
-	index = 1
-	while url:
-		print(f'{index}:{url}')
-		html = DownloadPage(url)
-		house_page_list, url = ParseRentHtml(html)
-		house_info_list.extend(house_page_list)
-		index += 1
-	return house_info_list
 def Write2File(house_data):
 	fp = codecs.open('data/house_info', 'wb', encoding='utf-8')
 	for line in house_data:
@@ -40,16 +35,9 @@ def Write2File(house_data):
 		house_type = line['house_type']
 		rent_month = line['rent_month']
 		fp.write(f'{address} {house_type} {rent_month}\n');
-def Main():
-	url = DOWNLOAD_URL
-	house_info_list = GetHouseInfo(url)
-	Write2File(house_info_list)
-
 '''
 #Update city_info table
 '''
-ANJUKE_CITY_INFO_URL = 'https://www.anjuke.com/sy-city.html'
-CITY_INFO_TABLE = 'city_info'
 def UpdateCityInfoFromAnjuke(DB, Logger, url = ANJUKE_CITY_INFO_URL):
 	try:
 		city_homepage_url_dict = GetAnjukeCityUrl(url)
@@ -147,7 +135,6 @@ def GetAnjukeCityZuUrl(city_url_dict):
 #Update district_info table'
 #Only for districts having rentint house
 '''
-DISTRICT_INFO_TABLE = 'district_info'
 def UpdateDistrictInfoFromAnjuke(DB, Logger):
 	sql_string = "SELECT city_id,city_name,anjuke_rent_url FROM city_info WHERE anjuke_rent_url!=''"
 	if not DB.query(sql_string):
@@ -201,7 +188,6 @@ def UpdateDistrictInfoFromAnjuke(DB, Logger):
 '''
 #Update community information
 '''
-COMMUNITY_INFO_TABLE = 'community_info'
 def GetAnjukeComInfo(DB, Logger):
 	sql_string = f'SELECT city_id,city_name,anjuke_homepage_url FROM {CITY_INFO_TABLE}'
 	if not DB.query(sql_string):
@@ -384,8 +370,7 @@ def ParseComHtml(url):
 '''
 #Update house-renting informations
 '''
-RENT_INFO_TABLE = 'rent_info'
-SHENZHEN_HOMEPAGE_URL='https://shenzhen.anjuke.com'
+
 def GetAnjukeRentInfo(DB, Logger):
 	try:
 		sql_string = f'SELECT city_id,city_name,anjuke_rent_url FROM {CITY_INFO_TABLE}'
@@ -506,11 +491,10 @@ def ParseRentHtml(DB, Logger, city_id, rent_url):
 		return house_info_list, next_page['href']
 	else:
 		return house_info_list, None		
-
 RENT_TYPE = {'整租':0, '合租':1}
 ORIENTATION = {	'朝东':1,'朝西':2,'朝南':3,'朝北':4,\
 				'东南':13,'西南':23,'东北':14,'西北':24,\
-				'东西':12,'南北':34,'不知道朝向':0}
+				'东西':12,'南北':34,'不知道朝向':-1}
 def QueryCommunityID(DB, Logger,rent_info):
 	cm_name = rent_info['cm_name']
 	if cm_name == '' or cm_name == '暂无小区':
@@ -576,7 +560,7 @@ def UpdateRentInfo(DB, Logger, rent_info):
 	if rent_info['orientation'] in ORIENTATION:
 		fields['h_orientation'] = ORIENTATION[rent_info['orientation']]
 	else:
-		fields['h_orientation'] = 0
+		fields['h_orientation'] = -1
 	fields['subway'] = rent_info['subway']
 	fields['remark'] = rent_info['remark']
 	if DB.insert(RENT_INFO_TABLE, fields): 
@@ -593,17 +577,16 @@ def UpdateRentInfo(DB, Logger, rent_info):
 	pass
 	
 if __name__ == '__main__':
-	Logger = common.CommonHelper.GetLogger('log/%s.log' % (time.strftime("%Y%m%d")));
+	cfgs = common.CommonHelper.ReadIniFile(CFG_PATH)
+	print(cfgs)
+	Logger = common.CommonHelper.GetLogger('%s/%s.log' % (cfgs['log']['path'], time.strftime("%Y%m%d")));
 	DB = common.MySQLHelper.MySQL('127.0.0.1', 'root','', 3306, 'house_info')
 	DB.query('SET NAMES UTF8')
 	print('Update City Informations')
-	#UpdateCityInfoFromAnjuke(DB, Logger, ANJUKE_CITY_INFO_URL)
+	UpdateCityInfoFromAnjuke(DB, Logger, ANJUKE_CITY_INFO_URL)
 	print('Update District Informations')
-	#UpdateDistrictInfoFromAnjuke(DB, Logger)
+	UpdateDistrictInfoFromAnjuke(DB, Logger)
 	print('Update Community Informations')
-	#GetAnjukeComInfo(DB, Logger)	
-	#print('Update 深圳 Community Informations')
-	#info_list = GetCityAllComInfo(SHENZHEN_HOMEPAGE_URL)
-	#UpdateCityComInfo(DB, Logger, 636, info_list)
+	GetAnjukeComInfo(DB, Logger)
 	print('Update Anjuke Rent Informations for all cities')
 	GetAnjukeRentInfo(DB, Logger)
