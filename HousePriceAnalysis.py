@@ -105,7 +105,7 @@ def UpdateCityInfoFromAnjuke(DB, Logger, url = ANJUKE_CITY_INFO_URL):
 	
 def GetAnjukeCityUrl(Logger, url = ANJUKE_CITY_INFO_URL):
 	html = DownloadPage(Logger, url)
-	if !html：
+	if not html:
 		return None
 	soup = BeautifulSoup(html,'html.parser')
 	letter_list_soup = soup.find('ul')
@@ -128,7 +128,7 @@ def GetAnjukeCityZuUrl(Logger, city_url_dict):
 	for city, c_url in city_url_dict.items():
 		time.sleep(0.1)
 		html = DownloadPage(Logger, c_url)		
-		if !html：
+		if nothtml:
 			continue
 		soup = BeautifulSoup(html,'html.parser')
 		ul_soup=soup.find('ul', attrs={'class':'L_tabsnew'})
@@ -236,20 +236,7 @@ def UpdateCityComInfo(DB, Logger, city_id, info_list):
 		return None
 	for fields in info_list:
 		fields['city_id'] = city_id
-		cm_name = fields['cm_name']
-		'''
-		sql_string = f"SELECT district_id FROM {DISTRICT_INFO_TABLE} WHERE \
-			district_name ='{fields['district_name']}'"
-		if not DB.query(sql_string):
-			Logger.error("sql[%s], error[%s]", sql_string, DB.get_last_error())
-			continue
-		rows = DB.fetch_all()
-		if len(rows) == 0:
-			Logger.error("sql[%s], error[no data]", sql_string)
-			continue
-		fields['district_id'] = rows[0]['district_id']		
-		del fields['district_name']
-		'''
+		cm_name = fields['cm_name']		
 		# update
 		sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} WHERE \
 			cm_name='{fields['cm_name']}' AND city_id={fields['city_id']} AND district='{fields['district']}'"
@@ -260,7 +247,7 @@ def UpdateCityComInfo(DB, Logger, city_id, info_list):
 		if len(rows) <= 0: 			
 			if DB.insert(COMMUNITY_INFO_TABLE, fields):                
 				Logger.info("insert table[%s] city_id[%s], district[%s] cm_name[%s] ok!" \
-				% (COMMUNITY_INFO_TABLE, fields["city_id"], fields['district'], fields['cm_name']));            
+					% (COMMUNITY_INFO_TABLE, fields["city_id"], fields['district'], fields['cm_name']));            
 				if TESTING:
 					print(f'insert {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] successfully')				
 			else:            
@@ -268,19 +255,18 @@ def UpdateCityComInfo(DB, Logger, city_id, info_list):
 					(COMMUNITY_INFO_TABLE, fields["city_id"], fields['district'], fields['cm_name'], DB.get_last_error()));
 				if TESTING:
 					print(f'insert {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] failed')				
-				continue
+			continue
+		cm_id = rows[0]['cm_id']
+		if DB.update(COMMUNITY_INFO_TABLE, fields, f"cm_id={cm_id}"):
+			if DB.rowcount() == 1:
+				Logger.info("update table[%s] successfully!" % COMMUNITY_INFO_TABLE);
+			if TESTING:
+				print(f'update {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] successfully')				
 		else:
-			cm_id = rows[0]['cm_id']
-			if DB.update(COMMUNITY_INFO_TABLE, fields, f"cm_id={cm_id}"):
-				if DB.rowcount() == 1:
-					Logger.info("update table[%s] successfully!" % COMMUNITY_INFO_TABLE);
-				if TESTING:
-					print(f'update {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] successfully')				
-			else:
-				Logger.error("update table[%s] error! sqlerror[%s]" \
-					% (COMMUNITY_INFO_TABLE, DB.get_last_error()));
-				if TESTING:
-					print(f'update {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] failed')				
+			Logger.error("update table[%s] error! sqlerror[%s]" \
+				% (COMMUNITY_INFO_TABLE, DB.get_last_error()));
+			if TESTING:
+				print(f'update {COMMUNITY_INFO_TABLE} cm_name[{cm_name}] failed')				
 	pass	
 # Get all community informations
 def GetCityAllComInfo(Logger, city_homepage_url):
@@ -304,7 +290,7 @@ def GetCityAllComInfo(Logger, city_homepage_url):
 # Get current page information	
 def GetCityPageComInfo(Logger, com_url):
 	html = DownloadPage(Logger, com_url)
-	if !html:
+	if not html:
 		return None, None
 	soup = BeautifulSoup(html,'html.parser')
 	list_soup = soup.find('div', attrs={'class':'list-content'})
@@ -324,11 +310,9 @@ def GetCityPageComInfo(Logger, com_url):
 		aver_price_soup = item_soup.find('strong')
 		aver_price = -1
 		if aver_price_soup:
-			aver_price = aver_price_soup.getText().strip()
-			if aver_price == '暂无数据' or aver_price == '暂无' or aver_price =='':
-				com_infos['aver_price'] = ''
-			else:
-				aver_price = float(aver_price)
+			aver_price_str = aver_price_soup.getText().strip()			
+			if aver_price_str != '暂无数据' and aver_price_str a!= '暂无' and aver_price_str !='':
+				aver_price = float(aver_price_str)
 		else:
 			msg = f"Url[{com_url}],error[cann't find aver_price form {com_info_url}]!"
 			Logger.error(msg)
@@ -352,7 +336,7 @@ def ParseComHtml(Logger, url):
 	com_infos = {}
 	try:
 		html = DownloadPage(Logger, url)
-		if !html:
+		if not html:
 			return None
 		soup = BeautifulSoup(html,'html.parser')
 		position_soup = soup.find('h1')
@@ -424,10 +408,11 @@ def GetAnjukeRentInfo(DB, Logger):
 			return
 		city_list = DB.fetch_all()
 		for row in city_list:
-			if row['anjuke_rent_url'] != '':		
-				if TESTING:
-					print(row['city_name'])
-				GetRentHouseInfo(DB, Logger, row['city_name'])
+			if row['anjuke_rent_url'] == '':
+				continue		
+			if TESTING:
+				print(row['city_name'])
+			GetRentHouseInfo(DB, Logger, row['city_name'])
 	except Exception as err:
 		trace = traceback.format_exc()
 		msg = "[Exception] %s\n%s" % (str(err), trace)		
@@ -460,7 +445,7 @@ def GetRentHouseInfo(DB, Logger, city_name):
 	pass
 def ParseRentHtml(DB, Logger, city_id, rent_url):
 	html = DownloadPage(Logger, rent_url)
-	if !html:
+	if not html:
 		return None, None
 	soup = BeautifulSoup(html,'html.parser')
 	house_list_soup = soup.find('div', attrs={'class': 'list-content'})
@@ -491,9 +476,7 @@ def ParseRentHtml(DB, Logger, city_id, rent_url):
 			district = district_block[0]
 			block = district_block[1]
 		if len(address_arr) >= 3:
-			street = address_arr[2].strip()
-		if TESTING:
-			print(community)			
+			street = address_arr[2].strip()		
 		other_detail = house_item.find('p',attrs={'class':'details-item tag'}).getText().strip().split('\ue147')
 		if len(other_detail) == 2:
 			contact = other_detail[1].strip()
@@ -627,17 +610,17 @@ def QueryCmidFromName(DB, Logger, rent_info):
 	cm_fields['block'] = rent_info['block']
 	cm_fields['street'] = rent_info['street']
 	cm_fields['subway'] = rent_info['subway']	
-	if DB.insert(COMMUNITY_INFO_TABLE, cm_fields):   
-		msg = f"insert table[{COMMUNITY_INFO_TABLE}] city_id[{cm_fields['city_id']}] cm_name[{cm_fields['cm_name']}] ok!"
-		if TESTING:
-			print(msg)
-		Logger.info(msg)           
-	else:
+	if not DB.insert(COMMUNITY_INFO_TABLE, cm_fields):   
 		msg = f'Error: insert table[{COMMUNITY_INFO_TABLE}] cm_name[{cm_name}]  error[{DB.get_last_error}]'
 		if TESTING:
 			print(msg)
 		Logger.error(msg)
 		return None
+	msg = f"insert table[{COMMUNITY_INFO_TABLE}] city_id[{cm_fields['city_id']}] cm_name[{cm_fields['cm_name']}] ok!"
+	if TESTING:
+		print(msg)
+	Logger.info(msg)
+		
 	sql_string = f"SELECT cm_id FROM {COMMUNITY_INFO_TABLE} WHERE cm_name='{cm_name}'"
 	if not DB.query(sql_string):
 		msg = f"Error: sql[{sql_string}], error[{DB.get_last_error()}]"
@@ -696,31 +679,27 @@ def UpdateRentInfo(DB, Logger, rent_info):
 			if TESTING:
 				print(msg)
 			return True
-		else:            
-			Logger.error("Insert table[%s] community[%s], remark[%s] failed! error[%s]" \
-				% (RENT_INFO_TABLE, rent_info['cm_name'], rent_info['remark'], DB.get_last_error()));
-			if TESTING:
-				print(f"Insert {RENT_INFO_TABLE} community[{rent_info['cm_name']}] remark[{rent_info['remark']}] failed!")	
-			return False
-	else:
-		h_id = rows[0]['h_id']
-		if DB.update(RENT_INFO_TABLE, fields, f"h_id={h_id}"):
-			msg = f"Update {RENT_INFO_TABLE} community[{rent_info['cm_name']}] remark[{rent_info['remark']}] ok!"
-			if DB.rowcount() == 1:
-				Logger.info(msg);
-			if TESTING:
-				print(msg)
-			return True
-		else:
-			Logger.error("update table[%s] error! sqlerror[%s]" \
-				% (RENT_INFO_TABLE, DB.get_last_error()));
-			if TESTING:
-				print(f"update {RENT_INFO_TABLE} community[{rent_info['cm_name']}] failed")
-			return False
+		Logger.error("Insert table[%s] community[%s], remark[%s] failed! error[%s]" \
+			% (RENT_INFO_TABLE, rent_info['cm_name'], rent_info['remark'], DB.get_last_error()));
+		if TESTING:
+			print(f"Insert {RENT_INFO_TABLE} community[{rent_info['cm_name']}] remark[{rent_info['remark']}] failed!")	
+		return False
+	h_id = rows[0]['h_id']
+	if DB.update(RENT_INFO_TABLE, fields, f"h_id={h_id}"):
+		msg = f"Update {RENT_INFO_TABLE} community[{rent_info['cm_name']}] remark[{rent_info['remark']}] ok!"
+		if DB.rowcount() == 1:
+			Logger.info(msg);
+		if TESTING:
+			print(msg)
+		return True
+	Logger.error("update table[%s] error! sqlerror[%s]" \
+		% (RENT_INFO_TABLE, DB.get_last_error()));
+	if TESTING:
+		print(f"update {RENT_INFO_TABLE} community[{rent_info['cm_name']}] failed")
+	return False
 
 '''
 1.更新中断继续更新功能
-2.连接中断重连
 '''	
 if __name__ == '__main__':
 	cfgs = common.CommonHelper.ReadIniFile(CFG_PATH)
@@ -733,7 +712,7 @@ if __name__ == '__main__':
 	#print('Update District Informations')
 	#UpdateDistrictInfoFromAnjuke(DB, Logger)
 	print('Update Community Informations')
-	GetAnjukeComInfo(DB, Logger)
+	#GetAnjukeComInfo(DB, Logger)
 	print('Update Anjuke Rent Informations for all cities')
 	GetAnjukeRentInfo(DB, Logger)
 	
