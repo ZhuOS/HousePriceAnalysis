@@ -17,11 +17,23 @@ CITY_INFO_TABLE = 'city_info'
 DISTRICT_INFO_TABLE = 'district_info'
 COMMUNITY_INFO_TABLE = 'community_info'
 RENT_INFO_TABLE = 'rent_info'
-def DownloadPage(url):	
-	html = requests.get(url, headers={
-		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'
-	}).content
-	return html
+def DownloadPage(Logger, url):
+	count = 0
+	while count < 3:
+		try:
+			if count > 0:
+				print('Try again ...')
+			html = requests.get(url, headers={
+				'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'
+			}).content				
+			return html
+		except Exception as err:
+			count += 1
+			trace = traceback.format_exc()
+			msg = "[Exception] url[%s] %s\n%s" % (url, str(err), trace)
+			print(f'Error: url[{url}] download page failed!\n')
+			Logger.error(msg)
+	return False
 def StringSplit(str,char,type = 0):
 	if type == 0:
 		idx = str.find(char)
@@ -46,8 +58,8 @@ def Write2File(house_data):
 '''
 def UpdateCityInfoFromAnjuke(DB, Logger, url = ANJUKE_CITY_INFO_URL):
 	try:
-		city_homepage_url_dict = GetAnjukeCityUrl(url)
-		city_rent_url_dict = GetAnjukeCityZuUrl(city_homepage_url_dict)
+		city_homepage_url_dict = GetAnjukeCityUrl(Logger, url)
+		city_rent_url_dict = GetAnjukeCityZuUrl(Logger, city_homepage_url_dict)
 	except Exception as err:
 		trace = traceback.format_exc()
 		msg = "[Exception] %s\n%s" % (str(err), trace);
@@ -91,8 +103,10 @@ def UpdateCityInfoFromAnjuke(DB, Logger, url = ANJUKE_CITY_INFO_URL):
 				Logger.error("update table[%s] error! sqlerror[%s]" % (CITY_INFO_TABLE, DB.get_last_error()));
 	pass 
 	
-def GetAnjukeCityUrl(url = ANJUKE_CITY_INFO_URL):
-	html = DownloadPage(url)
+def GetAnjukeCityUrl(Logger, url = ANJUKE_CITY_INFO_URL):
+	html = DownloadPage(Logger, url)
+	if !html：
+		return None
 	soup = BeautifulSoup(html,'html.parser')
 	letter_list_soup = soup.find('ul')
 	citys_url_dict = dict()
@@ -109,11 +123,13 @@ def GetAnjukeCityUrl(url = ANJUKE_CITY_INFO_URL):
 				print(f'{city}:{c_url}')
 	return citys_url_dict
 
-def GetAnjukeCityZuUrl(city_url_dict):
+def GetAnjukeCityZuUrl(Logger, city_url_dict):
 	city_zuurl_dict = dict()
 	for city, c_url in city_url_dict.items():
 		time.sleep(0.1)
-		html = DownloadPage(c_url)		
+		html = DownloadPage(Logger, c_url)		
+		if !html：
+			continue
 		soup = BeautifulSoup(html,'html.parser')
 		ul_soup=soup.find('ul', attrs={'class':'L_tabsnew'})
 		zu_url = ''
@@ -287,7 +303,9 @@ def GetCityAllComInfo(Logger, city_homepage_url):
 	return info_list
 # Get current page information	
 def GetCityPageComInfo(Logger, com_url):
-	html = DownloadPage(com_url)
+	html = DownloadPage(Logger, com_url)
+	if !html:
+		return None, None
 	soup = BeautifulSoup(html,'html.parser')
 	list_soup = soup.find('div', attrs={'class':'list-content'})
 	com_info_list = []
@@ -333,7 +351,9 @@ def GetCityPageComInfo(Logger, com_url):
 def ParseComHtml(Logger, url):
 	com_infos = {}
 	try:
-		html = DownloadPage(url)
+		html = DownloadPage(Logger, url)
+		if !html:
+			return None
 		soup = BeautifulSoup(html,'html.parser')
 		position_soup = soup.find('h1')
 		com_infos['cm_name'] = position_soup.getText().strip().split()[0]
@@ -439,7 +459,9 @@ def GetRentHouseInfo(DB, Logger, city_name):
 	return house_info_list		
 	pass
 def ParseRentHtml(DB, Logger, city_id, rent_url):
-	html = DownloadPage(rent_url)
+	html = DownloadPage(Logger, rent_url)
+	if !html:
+		return None, None
 	soup = BeautifulSoup(html,'html.parser')
 	house_list_soup = soup.find('div', attrs={'class': 'list-content'})
 	house_info_list = []
@@ -696,7 +718,10 @@ def UpdateRentInfo(DB, Logger, rent_info):
 				print(f"update {RENT_INFO_TABLE} community[{rent_info['cm_name']}] failed")
 			return False
 
-	
+'''
+1.更新中断继续更新功能
+2.连接中断重连
+'''	
 if __name__ == '__main__':
 	cfgs = common.CommonHelper.ReadIniFile(CFG_PATH)
 	Logger = common.CommonHelper.GetLogger('%s/%s.log' % (cfgs['log']['path'], time.strftime("%Y%m%d")));
@@ -704,7 +729,7 @@ if __name__ == '__main__':
 	DB.query('SET NAMES UTF8')
 	
 	print('Update City Informations')
-	UpdateCityInfoFromAnjuke(DB, Logger, ANJUKE_CITY_INFO_URL)
+	#UpdateCityInfoFromAnjuke(DB, Logger, ANJUKE_CITY_INFO_URL)
 	#print('Update District Informations')
 	#UpdateDistrictInfoFromAnjuke(DB, Logger)
 	print('Update Community Informations')
