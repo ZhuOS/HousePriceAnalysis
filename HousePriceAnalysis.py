@@ -311,7 +311,7 @@ def GetCityPageComInfo(Logger, com_url):
 		aver_price = -1
 		if aver_price_soup:
 			aver_price_str = aver_price_soup.getText().strip()			
-			if aver_price_str != '暂无数据' and aver_price_str a!= '暂无' and aver_price_str !='':
+			if aver_price_str != '暂无数据' and aver_price_str != '暂无' and aver_price_str !='':
 				aver_price = float(aver_price_str)
 		else:
 			msg = f"Url[{com_url}],error[cann't find aver_price form {com_info_url}]!"
@@ -440,6 +440,7 @@ def GetRentHouseInfo(DB, Logger, city_name):
 		house_page_list, rent_url = ParseRentHtml(DB, Logger, city_id, rent_url)
 		if house_page_list != None:
 			house_info_list.extend(house_page_list)
+			
 		index += 1
 	return house_info_list		
 	pass
@@ -451,90 +452,97 @@ def ParseRentHtml(DB, Logger, city_id, rent_url):
 	house_list_soup = soup.find('div', attrs={'class': 'list-content'})
 	house_info_list = []
 	for house_item in house_list_soup.find_all('div', attrs={'class':'zu-itemmod'}):
-		rent_price = int(house_item.find('strong').getText())
-		address_detail = house_item.find('address')
-		# get community id
-		cmmid_soup = address_detail.find('a')
-		cmmid = ''
-		if cmmid_soup:
-			cmmid = StringSplit(cmmid_soup['href'].strip(), "/",1)
-		community = ''
-		district = ''
-		block = ''
-		street = ''
-		address_str = address_detail.getText().strip()
-		address_arr = address_str.split()		
-		if len(address_arr) >= 1:
-			community = address_arr[0]
-		if len(address_arr) < 2 or len(address_arr[1].strip().split('-')) !=2:
-			street = address_str
-			msg = f'Error parse rent url[{rent_url}] address_arr[{address_arr}]'
-			Logger.error(msg)
-			print(msg)
-		else:
-			district_block = address_arr[1].strip().split('-')
-			district = district_block[0]
-			block = district_block[1]
-		if len(address_arr) >= 3:
-			street = address_arr[2].strip()		
-		other_detail = house_item.find('p',attrs={'class':'details-item tag'}).getText().strip().split('\ue147')
-		if len(other_detail) == 2:
-			contact = other_detail[1].strip()
-		else:
-			contact = ''		
-		other_parm = other_detail[0].split('|')
-		if len(other_parm) != 3:
-			room_num = -1
-			hall_num = -1
-			area = -1
-			floor = 0
-			msg = f'Error parse rent url[{rent_url}] other_parm[{other_parm}]'
-			Logger.error(msg)
-			print(msg)			
-		else:
-			room_num = int(StringSplit(other_parm[0],'室'))
-			hall_num = int(StringSplit(other_parm[0].split('室')[1],'厅'))
-			area = float(StringSplit(other_parm[1], '平'))
-			floor = int(StringSplit(other_parm[2], '/'))
-		rent_type = house_item.find('span', attrs={'class':'cls-1'}).getText()
-		orientation = house_item.find('span', attrs={'class':'cls-2'}).getText()
-		subway_soup = house_item.find('span', attrs={'class':'cls-3'})
-		subway = ''
-		if subway_soup:
-			subway = subway_soup.getText()		
-		remark_soup = house_item.find('h3').find('a')
-		remark = remark_soup['title'].strip()
-		house_url = remark_soup['href'].strip()
-		house_id = StringSplit(house_url, "/",1)
-		if TESTING:
-			print(f"{house_id}:{community}")
-		if house_id == None:
-			msg = f"Url[{rent_url}],error[cann't find house_id form {house_url}]!"
+		try:
+			rent_price = int(house_item.find('strong').getText())
+			address_detail = house_item.find('address')
+			# get community id
+			cmmid_soup = address_detail.find('a')
+			cmmid = ''
+			if cmmid_soup:
+				cmmid = StringSplit(cmmid_soup['href'].strip(), "/",1)
+			community = ''
+			district = ''
+			block = ''
+			street = ''
+			address_str = address_detail.getText().strip()
+			address_arr = address_str.split()		
+			if len(address_arr) >= 1:
+				community = address_arr[0]
+			if len(address_arr) < 2 or len(address_arr[1].strip().split('-')) !=2:
+				street = address_str
+				msg = f'Error parse rent url[{rent_url}] address_arr[{address_arr}]'
+				Logger.error(msg)
+				print(msg)
+			else:
+				district_block = address_arr[1].strip().split('-')
+				district = district_block[0]
+				block = district_block[1]
+			if len(address_arr) >= 3:
+				street = address_arr[2].strip()		
+			other_detail = house_item.find('p',attrs={'class':'details-item tag'}).getText().strip().split('\ue147')
+			if len(other_detail) == 2:
+				contact = other_detail[1].strip()
+			else:
+				contact = ''		
+			other_parm = other_detail[0].split('|')
+			if len(other_parm) != 3:
+				room_num = -1
+				hall_num = -1
+				area = -1
+				floor = 0
+				msg = f'Error parse rent url[{rent_url}] other_parm[{other_parm}]'
+				Logger.error(msg)
+				print(msg)			
+			else:
+				room_num = int(StringSplit(other_parm[0],'室'))
+				hall_num = int(StringSplit(other_parm[0].split('室')[1],'厅'))
+				area = float(StringSplit(other_parm[1], '平'))
+				floor = int(StringSplit(other_parm[2], '/'))
+			rent_type = house_item.find('span', attrs={'class':'cls-1'}).getText()
+			orientation = house_item.find('span', attrs={'class':'cls-2'}).getText()
+			subway_soup = house_item.find('span', attrs={'class':'cls-3'})
+			subway = ''
+			if subway_soup:
+				subway = subway_soup.getText()		
+			remark_soup = house_item.find('h3').find('a')
+			remark = remark_soup['title'].strip()
+			house_url = remark_soup['href'].strip()
+			house_id = StringSplit(house_url, "/",1)
+			if TESTING:
+				print(f"{house_id}:{community}")
+			if house_id == None:
+				msg = f"Url[{rent_url}],error[cann't find house_id form {house_url}]!"
+				Logger.error(msg)
+				if TESTING:
+					print(f'Error:{msg}')
+				continue
+				
+			fields = {}
+			fields['city_id'] = city_id
+			fields['h_rent'] = rent_price
+			fields['cm_name'] = community
+			fields['district'] = district
+			fields['block'] = block
+			fields['street'] = street
+			fields['contact'] = contact
+			fields['room_num'] = room_num
+			fields['hall_num'] = hall_num
+			fields['h_area'] = area
+			fields['floor'] = floor
+			fields['rent_type'] = rent_type
+			fields['orientation'] = orientation
+			fields['subway'] = subway
+			fields['remark'] = remark
+			fields['anjuke_hid'] = house_id
+			fields['anjuke_cmmid'] = cmmid
+			house_info_list.append(fields)		
+			UpdateRentInfo(DB, Logger, fields)	
+		except Exception as err:
+			trace = traceback.format_exc()
+			msg = "[Exception] %s\n%s" % (str(err), trace)		
 			Logger.error(msg)
 			if TESTING:
-				print(f'Error:{msg}')
-			continue
-			
-		fields = {}
-		fields['city_id'] = city_id
-		fields['h_rent'] = rent_price
-		fields['cm_name'] = community
-		fields['district'] = district
-		fields['block'] = block
-		fields['street'] = street
-		fields['contact'] = contact
-		fields['room_num'] = room_num
-		fields['hall_num'] = hall_num
-		fields['h_area'] = area
-		fields['floor'] = floor
-		fields['rent_type'] = rent_type
-		fields['orientation'] = orientation
-		fields['subway'] = subway
-		fields['remark'] = remark
-		fields['anjuke_hid'] = house_id
-		fields['anjuke_cmmid'] = cmmid
-		house_info_list.append(fields)		
-		UpdateRentInfo(DB, Logger, fields)		
+				print(f'Error[Parse anjuke rent information]:{msg}')
 	next_page = soup.find('a',attrs={'class':'aNxt'})
 	if next_page:
 		return house_info_list, next_page['href']
@@ -706,7 +714,7 @@ if __name__ == '__main__':
 	Logger = common.CommonHelper.GetLogger('%s/%s.log' % (cfgs['log']['path'], time.strftime("%Y%m%d")));
 	DB = common.MySQLHelper.MySQL('127.0.0.1', 'root','', 3306, 'house_info')
 	DB.query('SET NAMES UTF8')
-	
+	'''
 	print('Update City Informations')
 	#UpdateCityInfoFromAnjuke(DB, Logger, ANJUKE_CITY_INFO_URL)
 	#print('Update District Informations')
@@ -715,6 +723,9 @@ if __name__ == '__main__':
 	#GetAnjukeComInfo(DB, Logger)
 	print('Update Anjuke Rent Informations for all cities')
 	GetAnjukeRentInfo(DB, Logger)
-	
+	'''
+	print('Update Anjuke Rent Informations for SHENZHEN')
+	GetRentHouseInfo(DB, Logger, '深圳')
+	GetRentHouseInfo(DB, Logger, '福州')
 	
 	
